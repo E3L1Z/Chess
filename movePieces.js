@@ -1,7 +1,10 @@
 let movedPiece = ""
 let moves = 0
 
-let whitePieces = [""]
+let whitePieces = ["white_Rook_1", "white_Rook_2", "white_Knight_1", "white_Knight_2", "white_Bishop_1", "white_Bishop_2", "white_Queen", "white_King", "white_Pawn_1", "white_Pawn_2", "white_Pawn_3", "white_Pawn_4", "white_Pawn_5", "white_Pawn_6", "white_Pawn_7", "white_Pawn_8"]
+let blackPieces = ["black_Rook_1", "black_Rook_2", "black_Knight_1", "black_Knight_2", "black_Bishop_1", "black_Bishop_2", "black_Queen", "black_King", "black_Pawn_1", "black_Pawn_2", "black_Pawn_3", "black_Pawn_4", "black_Pawn_5", "black_Pawn_6", "black_Pawn_7", "black_Pawn_8"]
+
+let positions = {white_Rook_1: "H1", white_Rook_2: "A1", white_Knight_1: "G1", white_Knight_2: "B1", white_Bishop_1: "F1", white_Bishop_2: "C1", white_King: "E1", white_Queen: "D1"}
 
 function movePiece(obj){
     let id = obj.id
@@ -89,14 +92,28 @@ function sqrsPressed(obj){
     
     if(movedPiece){
         if(moves % 2 == 0){
-            for(i in [1, 2, 3, 4, 5, 6, 7, 8]){
-                document.getElementById(`white_Pawn_${i}`).style.pointerEvents = "none"
+            for(let i of whitePieces){
+                document.getElementById(i).style.pointerEvents = "none"
+            }
+
+            for(let i of blackPieces){
+                document.getElementById(i).style.pointerEvents = "auto"
             }
         }
+        if(moves % 2 == 1){
+            for(let i of whitePieces){
+                document.getElementById(i).style.pointerEvents = "auto"
+            }
+
+            for(let i of blackPieces){
+                document.getElementById(i).style.pointerEvents = "none"
+            }
+        }
+
+        moves++
+
         document.getElementById(movedPiece).style.top = `${y}px`
         document.getElementById(movedPiece).style.right = `${x}px`
         movedPiece = ""
     }
-
-    console.log(x, y)
 }
