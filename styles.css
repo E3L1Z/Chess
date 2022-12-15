@@ -1,0 +1,30 @@
+body{
+    background-color: rgb(53, 119, 63);
+}
+.board{
+    background-color: rgb(113, 64, 6);
+    position: fixed;
+    width: 500px;
+    height: 500px;
+    z-index: -2;
+    top: 50px;
+    left: 400px;
+}
+.sqrs{
+    width: 60px;
+    height: 60px;
+    float: left;
+    z-index: 1;
+}
+.whites{
+    position: absolute;;
+    z-index: 2;
+    width: 55px;
+    height: 55px;;
+}
+.blacks{
+    position: absolute;
+    z-index: 2;
+    width: 55px;
+    height: 55px;;
+}
