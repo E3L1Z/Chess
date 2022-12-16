@@ -1,5 +1,8 @@
 let movedPiece = ""
 let moves = 0
+let canContinue = true
+
+let morePieces = [2, 2, 2, 1]
 
 let whitePieces = ["white_Rook_1", "white_Rook_2", "white_Knight_1", "white_Knight_2", "white_Bishop_1", "white_Bishop_2", "white_Queen", "white_King", "white_Pawn_1", "white_Pawn_2", "white_Pawn_3", "white_Pawn_4", "white_Pawn_5", "white_Pawn_6", "white_Pawn_7", "white_Pawn_8"]
 let blackPieces = ["black_Rook_1", "black_Rook_2", "black_Knight_1", "black_Knight_2", "black_Bishop_1", "black_Bishop_2", "black_Queen", "black_King", "black_Pawn_1", "black_Pawn_2", "black_Pawn_3", "black_Pawn_4", "black_Pawn_5", "black_Pawn_6", "black_Pawn_7", "black_Pawn_8"]
@@ -187,6 +190,46 @@ function movePiece(obj){
     console.log(id)
 }
 
+function bishop(){
+    if(moves % 2 == 0){
+        positions[`white_Bishop_${morePieces[0]}`] = positions[movedPiece]
+        delete positions[movedPiece]
+        whitePieces.splice(whitePieces.findIndex((element) => element == movedPiece), 1)
+        document.getElementById(movedPiece).src = "images/bishop_white.png"
+        document.getElementById(movedPiece).id = `white_Bishop_${morePieces[0]}`
+        whitePieces.push(`white_Bishop_${morePieces[0]}`)
+        canContinue = true
+    }
+}
+
+function knight(){
+
+}
+
+function rook(){
+
+}
+
+function queen(){
+
+}
+
+function upgradePawn(white){
+    if(white){
+        document.getElementById("bishop").src = "images/bishop_white.png"
+        document.getElementById("knight").src = "images/knight_white.png"
+        document.getElementById("rook").src = "images/rook_white.png"
+        document.getElementById("queen").src = "images/queen_white.png"
+    } else {
+        document.getElementById("bishop").src = "images/bishop_black.png"
+        document.getElementById("knight").src = "images/knight_black.png"
+        document.getElementById("rook").src = "images/rook_black.png"
+        document.getElementById("queen").src = "images/queen_black.png"
+    }
+
+    document.getElementById("pawnUpgrades").style.visibility = "visible"
+}
+
 function sqrsPressed(obj){
     let id = obj.id
 
@@ -204,6 +247,11 @@ function sqrsPressed(obj){
             case "Rook":
                 if(id[0] == positions[movedPiece][0] || id[1] == positions[movedPiece][1]) {
                     canMove = true
+                    if(piecePos(id, movedPiece, pieceType)){
+                        if(moved[movedPiece] == falsea){
+                            moved[movedPiece] = true
+                        }
+                    }
                 }
                 break
 
@@ -286,6 +334,18 @@ function sqrsPressed(obj){
                     canMove = true
                 }
 
+                if(moves % 2 == 0 && piecePos(id, movedPiece, pieceType)){
+                    if(id[1] == "8"){
+                        upgradePawn(true)
+                        canContinue = false
+                    }
+                } else if(piecePos(id, movedPiece, pieceType)){
+                    if(id[1] == "1"){
+                        upgradePawn(false)
+                        canContinue = false
+                    }
+                }
+
                 break
 
             case "Knight":
@@ -301,7 +361,7 @@ function sqrsPressed(obj){
                 
         }
 
-        if(canMove && piecePos(id, movedPiece, pieceType) || hopOver){
+        if(canMove && piecePos(id, movedPiece, pieceType) && canContinue || hopOver && canContinue){
             let eatenPiece = null
 
             if(moves % 2 == 0){
