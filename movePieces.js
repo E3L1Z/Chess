@@ -6,7 +6,7 @@ let blackPieces = ["black_Rook_1", "black_Rook_2", "black_Knight_1", "black_Knig
 
 let moved = {white_Rook_1: false, white_Rook_2: false, white_King: false, white_Pawn_1: false, white_Pawn_2: false, white_Pawn_3: false, white_Pawn_4: false, white_Pawn_5: false, white_Pawn_6: false, white_Pawn_7: false, white_Pawn_8: false, black_Rook_1: false, black_Rook_2: false, black_King: false, black_Pawn_1: false, black_Pawn_2: false, black_Pawn_3: false, black_Pawn_4: false, black_Pawn_5: false, black_Pawn_6: false, black_Pawn_7: false, black_Pawn_8: false}
 
-let positions = {white_Rook_1: "H1", white_Rook_2: "A1", white_Knight_1: "G1", white_Knight_2: "B1", white_Bishop_1: "F1", white_Bishop_2: "C1", white_King: "E1", white_Queen: "D1", white_Pawn_1: "H2",  white_Pawn_2: "G2",  white_Pawn_3: "F2",  white_Pawn_4: "E2",  white_Pawn_5: "D2",  white_Pawn_6: "C2",  white_Pawn_7: "B2",  white_Pawn_8: "A2", black_Rook_1: "H8", black_Rook_2: "A8", black_Knight_1: "G8", black_Knight_2: "B8", black_Bishop_8: "F8", black_Bishop_2: "C8", black_King: "E8", black_Queen: "D8", black_Pawn_8: "H7",  black_Pawn_7: "G7",  black_Pawn_3: "F7",  black_Pawn_4: "E7",  black_Pawn_5: "D7",  black_Pawn_6: "C7",  black_Pawn_7: "B7",  black_Pawn_8: "A7"}
+let positions = {white_Rook_1: "H1", white_Rook_2: "A1", white_Knight_1: "G1", white_Knight_2: "B1", white_Bishop_1: "F1", white_Bishop_2: "C1", white_King: "E1", white_Queen: "D1", white_Pawn_1: "H2",  white_Pawn_2: "G2",  white_Pawn_3: "F2",  white_Pawn_4: "E2",  white_Pawn_5: "D2",  white_Pawn_6: "C2",  white_Pawn_7: "B2",  white_Pawn_8: "A2", black_Rook_1: "H8", black_Rook_2: "A8", black_Knight_1: "G8", black_Knight_2: "B8", black_Bishop_1: "F8", black_Bishop_2: "C8", black_King: "E8", black_Queen: "D8", black_Pawn_1: "H7",  black_Pawn_2: "G7",  black_Pawn_3: "F7",  black_Pawn_4: "E7",  black_Pawn_5: "D7",  black_Pawn_6: "C7",  black_Pawn_7: "B7",  black_Pawn_8: "A7"}
 
 function alphToNum(alpha){
     switch(alpha){
@@ -178,8 +178,10 @@ function movePiece(obj){
 
     if(movedPiece == id){
         movedPiece = ""
+        document.getElementById(id).style.opacity = 1
     } else{
         movedPiece = id
+        document.getElementById(id).style.opacity = 0.7
     }
 
     console.log(id)
@@ -224,30 +226,34 @@ function sqrsPressed(obj){
             case "King":
                 if(!moved[movedPiece]){
                     if(moves % 2 == 0){
-                        if(id == "F1" && !moved["white_Rook_1"]){
+                        if(id == "G1" && !moved["white_Rook_1"]){
                             if(piecePos(id, movedPiece, pieceType)){
                                 document.getElementById("white_Rook_1").style.right = `132px`
                                 hopOver = true
+                                moved[movedPieces] = true
                             }
                         }
                         if(id == "C1" && !moved["white_Rook_2"]){
                             if(piecePos(id, movedPiece, pieceType)){
                                 document.getElementById("white_Rook_2").style.right = `312px`
                                 hopOver = true
+                                moved[movedPieces] = true
                             }
                         }
                     }
                     if(moves % 2 == 1){
-                        if(id == "F8" && !moved["black_Rook_1"]){
+                        if(id == "G8" && !moved["black_Rook_1"]){
                             if(piecePos(id, movedPiece, pieceType)){
                                 document.getElementById("black_Rook_1").style.right = `132px`
                                 hopOver = true
+                                moved[movedPieces] = true
                             }
                         }
                         if(id == "C8" && !moved["black_Rook_2"]){
                             if(piecePos(id, movedPiece, pieceType)){
                                 document.getElementById("black_Rook_2").style.right = `312px`
                                 hopOver = true
+                                moved[movedPieces] = true
                             }
                         }
                     }
@@ -280,6 +286,17 @@ function sqrsPressed(obj){
                     canMove = true
                 }
 
+                break
+
+            case "Knight":
+                pieceType =  "Knight"
+
+                let posX = Math.pow(sqrPosNum[0] - piecePosNum[0], 2)
+                let posY = Math.pow(sqrPosNum[1] - piecePosNum[1], 2)
+
+                if(posX == 4 && posY == 1 || posX == 1 && posY == 4 ){
+                    hopOver = true
+                }
                 break
                 
         }
@@ -333,7 +350,12 @@ function sqrsPressed(obj){
 
             document.getElementById(movedPiece).style.top = `${y}px`
             document.getElementById(movedPiece).style.right = `${x}px`
+            document.getElementById(movedPiece).style.opacity = 1
+
             movedPiece = ""
+        } else{
+            document.getElementById(movedPiece).style.opacity = 1
+            movePieces = ""
         }
     }
 }
