@@ -2,7 +2,7 @@ let movedPiece = ""
 let moves = 0
 let canContinue = true
 
-let morePieces = [2, 2, 2, 1]
+let morePieces = {Bishop: 3, Knight: 3, Rook: 3, Queen: 2}
 
 let whitePieces = ["white_Rook_1", "white_Rook_2", "white_Knight_1", "white_Knight_2", "white_Bishop_1", "white_Bishop_2", "white_Queen", "white_King", "white_Pawn_1", "white_Pawn_2", "white_Pawn_3", "white_Pawn_4", "white_Pawn_5", "white_Pawn_6", "white_Pawn_7", "white_Pawn_8"]
 let blackPieces = ["black_Rook_1", "black_Rook_2", "black_Knight_1", "black_Knight_2", "black_Bishop_1", "black_Bishop_2", "black_Queen", "black_King", "black_Pawn_1", "black_Pawn_2", "black_Pawn_3", "black_Pawn_4", "black_Pawn_5", "black_Pawn_6", "black_Pawn_7", "black_Pawn_8"]
@@ -179,10 +179,13 @@ function getPos(obj, ar){
 function movePiece(obj){
     let id = obj.id
 
-    if(movedPiece == id){
+    if(movedPiece == id && canContinue){
         movedPiece = ""
         document.getElementById(id).style.opacity = 1
-    } else{
+    } else if(canContinue){
+        if(movedPiece){
+            document.getElementById(movedPiece).style.opacity = 1
+        }
         movedPiece = id
         document.getElementById(id).style.opacity = 0.7
     }
@@ -190,28 +193,20 @@ function movePiece(obj){
     console.log(id)
 }
 
-function bishop(){
-    if(moves % 2 == 0){
-        positions[`white_Bishop_${morePieces[0]}`] = positions[movedPiece]
-        delete positions[movedPiece]
-        whitePieces.splice(whitePieces.findIndex((element) => element == movedPiece), 1)
-        document.getElementById(movedPiece).src = "images/bishop_white.png"
-        document.getElementById(movedPiece).id = `white_Bishop_${morePieces[0]}`
-        whitePieces.push(`white_Bishop_${morePieces[0]}`)
-        canContinue = true
-    }
-}
+function changePawn(toChange){
+    let color = "white"
+    if(moves % 2 == 1) color = "black"
 
-function knight(){
-
-}
-
-function rook(){
-
-}
-
-function queen(){
-
+    document.getElementById("pawnUpgrades").style.visibility = "hidden"
+    positions[`${color}_${toChange}_${morePieces[toChange]}`] = positions[movedPiece]
+    delete positions[movedPiece]
+    whitePieces.splice(whitePieces.findIndex((element) => element == movedPiece), 1)
+    document.getElementById(movedPiece).src = `images/${toChange.toLowerCase()}_${color}.png`
+    document.getElementById(movedPiece).id = `${color}_${toChange}_${morePieces[toChange]}`
+    whitePieces.push(`${color}_${toChange}_${morePieces[toChange]}`)
+    movedPiece = ""
+    canContinue = true
+    moves += 1
 }
 
 function upgradePawn(white){
@@ -220,14 +215,60 @@ function upgradePawn(white){
         document.getElementById("knight").src = "images/knight_white.png"
         document.getElementById("rook").src = "images/rook_white.png"
         document.getElementById("queen").src = "images/queen_white.png"
+        document.getElementById(movedPiece).style.top = "12px"
     } else {
         document.getElementById("bishop").src = "images/bishop_black.png"
         document.getElementById("knight").src = "images/knight_black.png"
         document.getElementById("rook").src = "images/rook_black.png"
         document.getElementById("queen").src = "images/queen_black.png"
+        document.getElementById(movedPiece).style.top = "432px"
     }
 
     document.getElementById("pawnUpgrades").style.visibility = "visible"
+}
+
+function eat(id){
+    let eatenPiece = null
+
+    if(moves % 2 == 0){
+        for(let i of whitePieces){
+            document.getElementById(i).style.pointerEvents = "none"
+        }
+
+        for(let i of blackPieces){
+            document.getElementById(i).style.pointerEvents = "auto"
+
+            if(positions[i] == id){
+                eatenPiece = i
+                document.getElementById(i).style.visibility = "hidden"
+            }
+        }
+
+        if(eatenPiece) {
+            blackPieces.splice(blackPieces.findIndex((element) => element == eatenPiece), 1)
+            delete positions[eatenPiece]
+        }
+    }
+    if(moves % 2 == 1){
+        for(let i of whitePieces){
+            document.getElementById(i).style.pointerEvents = "auto"
+
+            if(positions[i] == id){
+                eatenPiece = i
+                document.getElementById(i).style.visibility = "hidden"
+            }
+        }
+
+        if(eatenPiece) {
+            whitePieces.splice(whitePieces.findIndex((element) => element == eatenPiece), 1)
+            delete positions[eatenPiece]
+        }
+
+        for(let i of blackPieces){
+            document.getElementById(i).style.pointerEvents = "none"
+        }
+
+    }
 }
 
 function sqrsPressed(obj){
@@ -362,47 +403,7 @@ function sqrsPressed(obj){
         }
 
         if(canMove && piecePos(id, movedPiece, pieceType) && canContinue || hopOver && canContinue){
-            let eatenPiece = null
-
-            if(moves % 2 == 0){
-                for(let i of whitePieces){
-                    document.getElementById(i).style.pointerEvents = "none"
-                }
-
-                for(let i of blackPieces){
-                    document.getElementById(i).style.pointerEvents = "auto"
-
-                    if(positions[i] == id){
-                        eatenPiece = i
-                        document.getElementById(i).style.visibility = "hidden"
-                    }
-                }
-
-                if(eatenPiece) {
-                    blackPieces.splice(blackPieces.findIndex((element) => element == eatenPiece), 1)
-                    delete positions[eatenPiece]
-                }
-            }
-            if(moves % 2 == 1){
-                for(let i of whitePieces){
-                    document.getElementById(i).style.pointerEvents = "auto"
-
-                    if(positions[i] == id){
-                        eatenPiece = i
-                        document.getElementById(i).style.visibility = "hidden"
-                    }
-                }
-
-                if(eatenPiece) {
-                    whitePieces.splice(whitePieces.findIndex((element) => element == eatenPiece), 1)
-                    delete positions[eatenPiece]
-                }
-
-                for(let i of blackPieces){
-                    document.getElementById(i).style.pointerEvents = "none"
-                }
-
-            }
+            eat(id)
 
             positions[movedPiece] = id
 
@@ -415,7 +416,7 @@ function sqrsPressed(obj){
             movedPiece = ""
         } else{
             document.getElementById(movedPiece).style.opacity = 1
-            movePieces = ""
+            movedPiece = ""
         }
     }
 }
