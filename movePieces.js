@@ -4,6 +4,8 @@ let moves = 0
 let whitePieces = ["white_Rook_1", "white_Rook_2", "white_Knight_1", "white_Knight_2", "white_Bishop_1", "white_Bishop_2", "white_Queen", "white_King", "white_Pawn_1", "white_Pawn_2", "white_Pawn_3", "white_Pawn_4", "white_Pawn_5", "white_Pawn_6", "white_Pawn_7", "white_Pawn_8"]
 let blackPieces = ["black_Rook_1", "black_Rook_2", "black_Knight_1", "black_Knight_2", "black_Bishop_1", "black_Bishop_2", "black_Queen", "black_King", "black_Pawn_1", "black_Pawn_2", "black_Pawn_3", "black_Pawn_4", "black_Pawn_5", "black_Pawn_6", "black_Pawn_7", "black_Pawn_8"]
 
+let moved = {white_Rook_1: false, white_Rook_2: false, white_King: false, white_Pawn_1: false, white_Pawn_2: false, white_Pawn_3: false, white_Pawn_4: false, white_Pawn_5: false, white_Pawn_6: false, white_Pawn_7: false, white_Pawn_8: false, black_Rook_1: false, black_Rook_2: false, black_King: false, black_Pawn_1: false, black_Pawn_2: false, black_Pawn_3: false, black_Pawn_4: false, black_Pawn_5: false, black_Pawn_6: false, black_Pawn_7: false, black_Pawn_8: false}
+
 let positions = {white_Rook_1: "H1", white_Rook_2: "A1", white_Knight_1: "G1", white_Knight_2: "B1", white_Bishop_1: "F1", white_Bishop_2: "C1", white_King: "E1", white_Queen: "D1", white_Pawn_1: "H2",  white_Pawn_2: "G2",  white_Pawn_3: "F2",  white_Pawn_4: "E2",  white_Pawn_5: "D2",  white_Pawn_6: "C2",  white_Pawn_7: "B2",  white_Pawn_8: "A2", black_Rook_1: "H8", black_Rook_2: "A8", black_Knight_1: "G8", black_Knight_2: "B8", black_Bishop_8: "F8", black_Bishop_2: "C8", black_King: "E8", black_Queen: "D8", black_Pawn_8: "H7",  black_Pawn_7: "G7",  black_Pawn_3: "F7",  black_Pawn_4: "E7",  black_Pawn_5: "D7",  black_Pawn_6: "C7",  black_Pawn_7: "B7",  black_Pawn_8: "A7"}
 
 function alphToNum(alpha){
@@ -34,12 +36,14 @@ function alphToNum(alpha){
     }
 }
 
-function piecePos(sqrPos, piecePos){
+function piecePos(sqrPos, piecePos, type){
     const sqrNumPos = [alphToNum(sqrPos[0]), parseInt(sqrPos[1])]
     const pieceNumPos = [alphToNum(positions[piecePos][0]), parseInt(positions[piecePos][1])]
     const x = sqrNumPos[0] - pieceNumPos[0]
     const y = sqrNumPos[1] - pieceNumPos[1]
     let canMove = true
+    let pieceDiagonaly = false
+    let movedDiagonaly = false
 
     console.log(sqrNumPos, pieceNumPos)
 
@@ -50,15 +54,50 @@ function piecePos(sqrPos, piecePos){
             continue
         }
 
+        if(type == "Pawn"){
+            if(sqrNumPos[0] == pieceNumPos[0]){
+                if(pos[1] == sqrNumPos[1] && pos[0] == sqrNumPos[0]){
+                    canMove = false
+                    break
+                }
+                continue
+            } 
+
+            if(Math.pow(x, 2) == Math.pow(y, 2)){
+                let pieceX = sqrNumPos[0] - pos[0]
+                let pieceY = sqrNumPos[1] - pos[1]
+                console.log(pieceX, pieceY, x, y, pos, sqrNumPos)
+                if(Math.pow(pieceX, 2) == Math.pow(pieceY, 2)){
+                    if(pieceX == 0){
+                        pieceDiagonaly = true
+                        break
+                    }
+                    /*if(pieceX > 0 && x > 0 && pieceY > 0 && y > 0 && x > pieceX && y > pieceY){
+                        pieceDiagonaly = true
+                        break
+                    }
+                    if(pieceX > 0 && x > 0 && pieceY < 0 && y < 0 && y < pieceY && x > pieceX){
+                        pieceDiagonaly = true
+                        break
+                    }*/
+                    
+                }
+
+                movedDiagonaly = true
+            }
+
+            continue
+        }
+
         if(sqrNumPos[0] == pieceNumPos[0]){
-            if(pos[1] > pieceNumPos[1] && pos[1] < sqrNumPos[1] || pos[1] < pieceNumPos[1] && pos[1] > sqrNumPos[1]){
+            if(pos[1] > pieceNumPos[1] && pos[1] < sqrNumPos[1] && pos[0] == sqrNumPos[0] || pos[1] < pieceNumPos[1] && pos[1] > sqrNumPos[1] && pos[0] == sqrNumPos[0]){
                 canMove = false
                 break
             }
             continue
         } 
         if(sqrNumPos[1] == pieceNumPos[1]){
-            if(pos[0] > pieceNumPos[0] && pos[0] < sqrNumPos[0] || pos[0] < pieceNumPos[0] && pos[0] > sqrNumPos[0]){
+            if(pos[0] > pieceNumPos[0] && pos[0] < sqrNumPos[0] && pos[1] == sqrNumPos[1]|| pos[0] < pieceNumPos[0] && pos[0] > sqrNumPos[0] && pos[1] == sqrNumPos[1]){
                 canMove = false
                 break
             }
@@ -67,20 +106,20 @@ function piecePos(sqrPos, piecePos){
         if(Math.pow(x, 2) == Math.pow(y, 2)){
             let pieceX = sqrNumPos[0] - pos[0]
             let pieceY = sqrNumPos[1] - pos[1]
-            if(Math.pow(pieceX, 2) === Math.pow(pieceY, 2)){
-                if(x < 0 && y < 0 && pieceX < 0 && pieceY < 0){
+            if(Math.pow(pieceX, 2) == Math.pow(pieceY, 2)){
+                if(x < 0 && y < 0 && pieceX < 0 && pieceY < 0 && x < pieceX && y < pieceY){
                     canMove = false
                     break
                 }
-                if(x > 0 && y < 0 && pieceX > 0 && pieceY < 0){
+                if(x > 0 && y < 0 && pieceX > 0 && pieceY < 0 && x > pieceX && y < pieceY){
                     canMove = false
                     break
                 }
-                if(x < 0 && y > 0 && pieceX < 0 && pieceY > 0){
+                if(x < 0 && y > 0 && pieceX < 0 && pieceY > 0 && x < pieceX && y > pieceY){
                     canMove = false
                     break
                 }
-                if(x > 0 && y > 0 && pieceX > 0 && pieceY > 0){
+                if(x > 0 && y > 0 && pieceX > 0 && pieceY > 0 && x > pieceX && y > pieceY){
                     canMove = false
                     break
                 }
@@ -89,6 +128,8 @@ function piecePos(sqrPos, piecePos){
         }
 
     }
+
+    canMove = pieceDiagonaly ? true : (movedDiagonaly ? false : canMove)
 
     return canMove
 }
@@ -154,6 +195,8 @@ function sqrsPressed(obj){
         const sqrPosNum = [alphToNum(id[0]), parseInt(id[1])]
         const piecePosNum = [alphToNum(positions[movedPiece][0]), parseInt(positions[movedPiece][1])]
         let canMove = false
+        let pieceType = null
+        let hopOver = false
 
         switch(movedPiece.split("_")[1]){
             case "Rook":
@@ -163,8 +206,6 @@ function sqrsPressed(obj){
                 break
 
             case "Bishop":
-                
-
                 if(Math.pow(sqrPosNum[0] - piecePosNum[0], 2) == Math.pow(sqrPosNum[1] - piecePosNum[1], 2)){
                     canMove = true
                 }
@@ -181,6 +222,37 @@ function sqrsPressed(obj){
                 break
 
             case "King":
+                if(!moved[movedPiece]){
+                    if(moves % 2 == 0){
+                        if(id == "F1" && !moved["white_Rook_1"]){
+                            if(piecePos(id, movedPiece, pieceType)){
+                                document.getElementById("white_Rook_1").style.right = `132px`
+                                hopOver = true
+                            }
+                        }
+                        if(id == "C1" && !moved["white_Rook_2"]){
+                            if(piecePos(id, movedPiece, pieceType)){
+                                document.getElementById("white_Rook_2").style.right = `312px`
+                                hopOver = true
+                            }
+                        }
+                    }
+                    if(moves % 2 == 1){
+                        if(id == "F8" && !moved["black_Rook_1"]){
+                            if(piecePos(id, movedPiece, pieceType)){
+                                document.getElementById("black_Rook_1").style.right = `132px`
+                                hopOver = true
+                            }
+                        }
+                        if(id == "C8" && !moved["black_Rook_2"]){
+                            if(piecePos(id, movedPiece, pieceType)){
+                                document.getElementById("black_Rook_2").style.right = `312px`
+                                hopOver = true
+                            }
+                        }
+                    }
+                }
+
                 if(Math.pow(sqrPosNum[0] - piecePosNum[0], 2) == 1 && Math.pow(sqrPosNum[1] - piecePosNum[1], 2) == 1){
                     canMove = true
                 }
@@ -189,10 +261,30 @@ function sqrsPressed(obj){
                     canMove = true
                 }
                 break
+
+            case "Pawn":
+                pieceType =  "Pawn"
+
+                if(!moved[movedPiece]){
+                    if(id[0] == positions[movedPiece][0] && parseInt(id[1]) - parseInt(positions[movedPiece][1]) <= 2 && moves % 2 == 0 || id[0] == positions[movedPiece][0] && parseInt(id[1]) - parseInt(positions[movedPiece][1]) >= -2 && moves % 2 == 1){
+                        canMove = true
+                        moved[movedPiece] = true
+                    }
+                }
+
+                if(id[0] == positions[movedPiece][0] && parseInt(id[1]) - parseInt(positions[movedPiece][1]) == 1 && moves % 2 == 0 || id[0] == positions[movedPiece][0] && parseInt(id[1]) - parseInt(positions[movedPiece][1]) == -1 && moves % 2 == 1){
+                    canMove = true
+                }
+
+                if(moves % 2 == 0 && sqrPosNum[0] - piecePosNum[0] == 1 && sqrPosNum[1] - piecePosNum[1] == 1 || moves % 2 == 0 && sqrPosNum[0] - piecePosNum[0] == -1 && sqrPosNum[1] - piecePosNum[1] == 1 || moves % 2 == 1 && sqrPosNum[0] - piecePosNum[0] == 1 && sqrPosNum[1] - piecePosNum[1] == -1 || moves % 2 == 1 && sqrPosNum[0] - piecePosNum[0] == -1 && sqrPosNum[1] - piecePosNum[1] == -1){
+                    canMove = true
+                }
+
+                break
                 
         }
 
-        if(canMove && piecePos(id, movedPiece)){
+        if(canMove && piecePos(id, movedPiece, pieceType) || hopOver){
             let eatenPiece = null
 
             if(moves % 2 == 0){
@@ -204,26 +296,30 @@ function sqrsPressed(obj){
                     document.getElementById(i).style.pointerEvents = "auto"
 
                     if(positions[i] == id){
-                        console.log("Eaten")
                         eatenPiece = i
                         document.getElementById(i).style.visibility = "hidden"
                     }
                 }
 
-                if(eatenPiece) blackPieces.splice(blackPieces.findIndex((element) => element == eatenPiece), 1)
+                if(eatenPiece) {
+                    blackPieces.splice(blackPieces.findIndex((element) => element == eatenPiece), 1)
+                    delete positions[eatenPiece]
+                }
             }
             if(moves % 2 == 1){
                 for(let i of whitePieces){
                     document.getElementById(i).style.pointerEvents = "auto"
 
                     if(positions[i] == id){
-                        console.log("Eaten")
                         eatenPiece = i
                         document.getElementById(i).style.visibility = "hidden"
                     }
                 }
 
-                if(eatenPiece) whitePieces.splice(whitePieces.findIndex((element) => element == eatenPiece), 1)
+                if(eatenPiece) {
+                    whitePieces.splice(whitePieces.findIndex((element) => element == eatenPiece), 1)
+                    delete positions[eatenPiece]
+                }
 
                 for(let i of blackPieces){
                     document.getElementById(i).style.pointerEvents = "none"
