@@ -69,21 +69,11 @@ function piecePos(sqrPos, piecePos, type){
             if(Math.pow(x, 2) == Math.pow(y, 2)){
                 let pieceX = sqrNumPos[0] - pos[0]
                 let pieceY = sqrNumPos[1] - pos[1]
-                console.log(pieceX, pieceY, x, y, pos, sqrNumPos)
                 if(Math.pow(pieceX, 2) == Math.pow(pieceY, 2)){
                     if(pieceX == 0){
                         pieceDiagonaly = true
                         break
-                    }
-                    /*if(pieceX > 0 && x > 0 && pieceY > 0 && y > 0 && x > pieceX && y > pieceY){
-                        pieceDiagonaly = true
-                        break
-                    }
-                    if(pieceX > 0 && x > 0 && pieceY < 0 && y < 0 && y < pieceY && x > pieceX){
-                        pieceDiagonaly = true
-                        break
-                    }*/
-                    
+                    }                 
                 }
 
                 movedDiagonaly = true
@@ -200,30 +190,40 @@ function changePawn(toChange){
     document.getElementById("pawnUpgrades").style.visibility = "hidden"
     positions[`${color}_${toChange}_${morePieces[toChange]}`] = positions[movedPiece]
     delete positions[movedPiece]
-    whitePieces.splice(whitePieces.findIndex((element) => element == movedPiece), 1)
+    if(color == "white"){
+        whitePieces.push(`${color}_${toChange}_${morePieces[toChange]}`)
+        whitePieces.splice(whitePieces.findIndex((element) => element == movedPiece), 1)
+    } else {
+        blackPieces.push(`${color}_${toChange}_${morePieces[toChange]}`)
+        blackPieces.splice(blackPieces.findIndex((element) => element == movedPiece), 1)
+    }
     document.getElementById(movedPiece).src = `images/${toChange.toLowerCase()}_${color}.png`
+    document.getElementById(movedPiece).style.opacity = 1
     document.getElementById(movedPiece).id = `${color}_${toChange}_${morePieces[toChange]}`
-    whitePieces.push(`${color}_${toChange}_${morePieces[toChange]}`)
     movedPiece = ""
     canContinue = true
     moves += 1
 }
 
-function upgradePawn(white){
+function upgradePawn(white, x){
     if(white){
         document.getElementById("bishop").src = "images/bishop_white.png"
         document.getElementById("knight").src = "images/knight_white.png"
         document.getElementById("rook").src = "images/rook_white.png"
         document.getElementById("queen").src = "images/queen_white.png"
         document.getElementById(movedPiece).style.top = "12px"
+        positions[movedPiece] = x + "8"
     } else {
         document.getElementById("bishop").src = "images/bishop_black.png"
         document.getElementById("knight").src = "images/knight_black.png"
         document.getElementById("rook").src = "images/rook_black.png"
         document.getElementById("queen").src = "images/queen_black.png"
         document.getElementById(movedPiece).style.top = "432px"
+        positions[movedPiece] = x + "1"
     }
 
+    eat(positions[movedPiece])
+    document.getElementById(movedPiece).style.right = `${getPos(x, ["A", "B", "C", "D", "E", "F", "G", "H"])}px`
     document.getElementById("pawnUpgrades").style.visibility = "visible"
 }
 
@@ -289,7 +289,7 @@ function sqrsPressed(obj){
                 if(id[0] == positions[movedPiece][0] || id[1] == positions[movedPiece][1]) {
                     canMove = true
                     if(piecePos(id, movedPiece, pieceType)){
-                        if(moved[movedPiece] == falsea){
+                        if(moved[movedPiece] == false){
                             moved[movedPiece] = true
                         }
                     }
@@ -377,13 +377,15 @@ function sqrsPressed(obj){
 
                 if(moves % 2 == 0 && piecePos(id, movedPiece, pieceType)){
                     if(id[1] == "8"){
-                        upgradePawn(true)
+                        upgradePawn(true, id[0])
                         canContinue = false
+                        return
                     }
                 } else if(piecePos(id, movedPiece, pieceType)){
                     if(id[1] == "1"){
-                        upgradePawn(false)
+                        upgradePawn(false, id[0])
                         canContinue = false
+                        return
                     }
                 }
 
