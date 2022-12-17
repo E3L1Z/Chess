@@ -2,6 +2,8 @@ let movedPiece = ""
 let moves = 0
 let canContinue = true
 let doupleMove = ""
+let num = 0
+
 
 let morePieces = {Bishop: 3, Knight: 3, Rook: 3, Queen: 2}
 
@@ -70,6 +72,7 @@ function piecePos(sqrPos, piecePos, type){
             if(Math.pow(x, 2) == Math.pow(y, 2)){
                 let pieceX = sqrNumPos[0] - pos[0]
                 let pieceY = sqrNumPos[1] - pos[1]
+
                 if(Math.pow(pieceX, 2) == Math.pow(pieceY, 2)){
                     if(pieceX == 0){
                         pieceDiagonaly = true
@@ -78,8 +81,8 @@ function piecePos(sqrPos, piecePos, type){
                 }
 
                 if(doupleMove){
-                    if(doupleMove[0] == sqrPos[0] && doupleMove[1] == piecePos[1]){
-                        
+                    if(doupleMove[0] == sqrPos[0] && parseInt(doupleMove[1]) == pieceNumPos[1] && num == 0){
+                        pieceDiagonaly = true
                     }
                 }
 
@@ -279,8 +282,6 @@ function eat(id){
 }
 
 function sqrsPressed(obj){
-    doupleMove  = ""
-
     let id = obj.id
 
     let y = getPos(id[1], ["1", "2", "3", "4", "5", "6", "7", "8"])
@@ -293,6 +294,7 @@ function sqrsPressed(obj){
         let pieceType = null
         let hopOver = false
         let movedDouble = false
+        let movedDiagonaly = false
 
         switch(movedPiece.split("_")[1]){
             case "Rook":
@@ -371,7 +373,7 @@ function sqrsPressed(obj){
                 pieceType =  "Pawn"
 
                 if(!moved[movedPiece]){
-                    if(id[0] == positions[movedPiece][0] && parseInt(id[1]) - parseInt(positions[movedPiece][1]) <= 2 && moves % 2 == 0 || id[0] == positions[movedPiece][0] && parseInt(id[1]) - parseInt(positions[movedPiece][1]) >= -2 && moves % 2 == 1){
+                    if(id[0] == positions[movedPiece][0] && parseInt(id[1]) - parseInt(positions[movedPiece][1]) == 2 && moves % 2 == 0 || id[0] == positions[movedPiece][0] && parseInt(id[1]) - parseInt(positions[movedPiece][1]) == -2 && moves % 2 == 1){
                         canMove = true
                         movedDouble = true
                     }
@@ -383,6 +385,10 @@ function sqrsPressed(obj){
 
                 if(moves % 2 == 0 && sqrPosNum[0] - piecePosNum[0] == 1 && sqrPosNum[1] - piecePosNum[1] == 1 || moves % 2 == 0 && sqrPosNum[0] - piecePosNum[0] == -1 && sqrPosNum[1] - piecePosNum[1] == 1 || moves % 2 == 1 && sqrPosNum[0] - piecePosNum[0] == 1 && sqrPosNum[1] - piecePosNum[1] == -1 || moves % 2 == 1 && sqrPosNum[0] - piecePosNum[0] == -1 && sqrPosNum[1] - piecePosNum[1] == -1){
                     canMove = true
+                    console.log("id: " + id)
+                    if(moves % 2 == 0 && id[1] == "6" || moves % 2 == 1 && id[1] == "3") {
+                        movedDiagonaly = true
+                    }
                 }
 
                 if(moves % 2 == 0 && piecePos(id, movedPiece, pieceType)){
@@ -415,12 +421,30 @@ function sqrsPressed(obj){
         }
 
         if(canMove && piecePos(id, movedPiece, pieceType) && canContinue || hopOver && canContinue){
+            num++
+
             if(movedDouble){
+                num = 0
                 moved[movedPiece] = true
+                console.log("Moved double")
                 doupleMove = id
             }   
 
-            eat(id)
+            if(doupleMove && movedDiagonaly){
+                console.log("Moved double & diagonally")
+                let newId = ""
+
+                if(moves % 2 == 0){
+                    newId = id[0] + "5"
+                } else{
+                    newId = id[0] + "4"
+                }
+
+                console.log(newId)
+                eat(newId)
+            } else {
+                eat(id)
+            }
 
             positions[movedPiece] = id
 
