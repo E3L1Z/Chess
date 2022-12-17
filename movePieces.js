@@ -1,6 +1,7 @@
 let movedPiece = ""
 let moves = 0
 let canContinue = true
+let doupleMove = ""
 
 let morePieces = {Bishop: 3, Knight: 3, Rook: 3, Queen: 2}
 
@@ -74,6 +75,12 @@ function piecePos(sqrPos, piecePos, type){
                         pieceDiagonaly = true
                         break
                     }                 
+                }
+
+                if(doupleMove){
+                    if(doupleMove[0] == sqrPos[0] && doupleMove[1] == piecePos[1]){
+                        
+                    }
                 }
 
                 movedDiagonaly = true
@@ -272,6 +279,8 @@ function eat(id){
 }
 
 function sqrsPressed(obj){
+    doupleMove  = ""
+
     let id = obj.id
 
     let y = getPos(id[1], ["1", "2", "3", "4", "5", "6", "7", "8"])
@@ -283,6 +292,7 @@ function sqrsPressed(obj){
         let canMove = false
         let pieceType = null
         let hopOver = false
+        let movedDouble = false
 
         switch(movedPiece.split("_")[1]){
             case "Rook":
@@ -363,7 +373,7 @@ function sqrsPressed(obj){
                 if(!moved[movedPiece]){
                     if(id[0] == positions[movedPiece][0] && parseInt(id[1]) - parseInt(positions[movedPiece][1]) <= 2 && moves % 2 == 0 || id[0] == positions[movedPiece][0] && parseInt(id[1]) - parseInt(positions[movedPiece][1]) >= -2 && moves % 2 == 1){
                         canMove = true
-                        moved[movedPiece] = true
+                        movedDouble = true
                     }
                 }
 
@@ -405,6 +415,11 @@ function sqrsPressed(obj){
         }
 
         if(canMove && piecePos(id, movedPiece, pieceType) && canContinue || hopOver && canContinue){
+            if(movedDouble){
+                moved[movedPiece] = true
+                doupleMove = id
+            }   
+
             eat(id)
 
             positions[movedPiece] = id
