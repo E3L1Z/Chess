@@ -232,12 +232,12 @@ function upgradePawn(white, x){
         positions[movedPiece] = x + "1"
     }
 
-    eat(positions[movedPiece])
+    eat(positions[movedPiece], false)
     document.getElementById(movedPiece).style.right = `${getPos(x, ["A", "B", "C", "D", "E", "F", "G", "H"])}px`
     document.getElementById("pawnUpgrades").style.visibility = "visible"
 }
 
-function eat(id){
+function eat(id, castle){
     let eatenPiece = null
 
     if(moves % 2 == 0){
@@ -254,7 +254,7 @@ function eat(id){
             }
         }
 
-        if(eatenPiece) {
+        if(eatenPiece && !castle) {
             blackPieces.splice(blackPieces.findIndex((element) => element == eatenPiece), 1)
             delete positions[eatenPiece]
         }
@@ -269,7 +269,7 @@ function eat(id){
             }
         }
 
-        if(eatenPiece) {
+        if(eatenPiece && !castle) {
             whitePieces.splice(whitePieces.findIndex((element) => element == eatenPiece), 1)
             delete positions[eatenPiece]
         }
@@ -279,6 +279,10 @@ function eat(id){
         }
 
     }
+}
+
+function check(kingPos){
+    let kingNumPos = [alphToNum(kingPos[0]), parseInt(kingPos[1])]
 }
 
 function sqrsPressed(obj){
@@ -330,31 +334,63 @@ function sqrsPressed(obj){
                         if(id == "G1" && !moved["white_Rook_1"]){
                             if(piecePos(id, movedPiece, pieceType)){
                                 document.getElementById("white_Rook_1").style.right = `132px`
-                                hopOver = true
+                                document.getElementById(movedPiece).style.right = `${x}px`
+                                document.getElementById(movedPiece).style.opacity = 1
+                                eat(positions[movedPiece], true)
+                                moves++
+                                num++
                                 moved[movedPieces] = true
+                                positions[movedPiece] = id
+                                movedPiece = ""
+                                positions["white_Rook_1"] = "F1"
+                                return
                             }
                         }
-                        if(id == "C1" && !moved["white_Rook_2"]){
+                        else if(id == "C1" && !moved["white_Rook_2"]){
                             if(piecePos(id, movedPiece, pieceType)){
+                                document.getElementById(movedPiece).style.opacity = 1
                                 document.getElementById("white_Rook_2").style.right = `312px`
-                                hopOver = true
                                 moved[movedPieces] = true
+                                eat(positions[movedPiece], true)
+                                document.getElementById(movedPiece).style.right = `${x}px`
+                                num++
+                                moves++
+                                positions[movedPiece] = id
+                                movedPiece = ""
+                                positions["white_Rook_2"] = "D1"
+                                return
                             }
                         }
                     }
-                    if(moves % 2 == 1){
+                    else if(moves % 2 == 1){
                         if(id == "G8" && !moved["black_Rook_1"]){
                             if(piecePos(id, movedPiece, pieceType)){
+                                document.getElementById(movedPiece).style.opacity = 1
                                 document.getElementById("black_Rook_1").style.right = `132px`
-                                hopOver = true
                                 moved[movedPieces] = true
+                                eat(positions[movedPiece], true)
+                                document.getElementById(movedPiece).style.right = `${x}px`
+                                num++
+                                moves++
+                                positions[movedPiece] = id
+                                movedPiece = ""
+                                positions["black_Rook_1"] = "F8"
+                                return
                             }
                         }
-                        if(id == "C8" && !moved["black_Rook_2"]){
+                        else if(id == "C8" && !moved["black_Rook_2"]){
                             if(piecePos(id, movedPiece, pieceType)){
+                                document.getElementById(movedPiece).style.opacity = 1
                                 document.getElementById("black_Rook_2").style.right = `312px`
-                                hopOver = true
                                 moved[movedPieces] = true
+                                eat(positions[movedPiece], true)
+                                document.getElementById(movedPiece).style.right = `${x}px`
+                                num++
+                                moves++
+                                positions[movedPiece] = id
+                                movedPiece = ""
+                                positions["black_Rook_2"] = "D8"
+                                return
                             }
                         }
                     }
@@ -381,27 +417,40 @@ function sqrsPressed(obj){
 
                 if(id[0] == positions[movedPiece][0] && parseInt(id[1]) - parseInt(positions[movedPiece][1]) == 1 && moves % 2 == 0 || id[0] == positions[movedPiece][0] && parseInt(id[1]) - parseInt(positions[movedPiece][1]) == -1 && moves % 2 == 1){
                     canMove = true
+
+                    if(moves % 2 == 0 && piecePos(id, movedPiece, pieceType)){
+                        if(id[1] == "8"){
+                            upgradePawn(true, id[0])
+                            canContinue = false
+                            return
+                        }
+                    } else if(piecePos(id, movedPiece, pieceType)){
+                        if(id[1] == "1"){
+                            upgradePawn(false, id[0])
+                            canContinue = false
+                            return
+                        }
+                    }
                 }
 
                 if(moves % 2 == 0 && sqrPosNum[0] - piecePosNum[0] == 1 && sqrPosNum[1] - piecePosNum[1] == 1 || moves % 2 == 0 && sqrPosNum[0] - piecePosNum[0] == -1 && sqrPosNum[1] - piecePosNum[1] == 1 || moves % 2 == 1 && sqrPosNum[0] - piecePosNum[0] == 1 && sqrPosNum[1] - piecePosNum[1] == -1 || moves % 2 == 1 && sqrPosNum[0] - piecePosNum[0] == -1 && sqrPosNum[1] - piecePosNum[1] == -1){
                     canMove = true
-                    console.log("id: " + id)
                     if(moves % 2 == 0 && id[1] == "6" || moves % 2 == 1 && id[1] == "3") {
                         movedDiagonaly = true
                     }
-                }
 
-                if(moves % 2 == 0 && piecePos(id, movedPiece, pieceType)){
-                    if(id[1] == "8"){
-                        upgradePawn(true, id[0])
-                        canContinue = false
-                        return
-                    }
-                } else if(piecePos(id, movedPiece, pieceType)){
-                    if(id[1] == "1"){
-                        upgradePawn(false, id[0])
-                        canContinue = false
-                        return
+                    if(moves % 2 == 0 && piecePos(id, movedPiece, pieceType)){
+                        if(id[1] == "8"){
+                            upgradePawn(true, id[0])
+                            canContinue = false
+                            return
+                        }
+                    } else if(piecePos(id, movedPiece, pieceType)){
+                        if(id[1] == "1"){
+                            upgradePawn(false, id[0])
+                            canContinue = false
+                            return
+                        }
                     }
                 }
 
@@ -426,12 +475,10 @@ function sqrsPressed(obj){
             if(movedDouble){
                 num = 0
                 moved[movedPiece] = true
-                console.log("Moved double")
                 doupleMove = id
             }   
 
-            if(doupleMove && movedDiagonaly){
-                console.log("Moved double & diagonally")
+            if(doupleMove[0] == id[0] && movedDiagonaly && num == 1){
                 let newId = ""
 
                 if(moves % 2 == 0){
@@ -440,10 +487,9 @@ function sqrsPressed(obj){
                     newId = id[0] + "4"
                 }
 
-                console.log(newId)
-                eat(newId)
+                eat(newId, false)
             } else {
-                eat(id)
+                eat(id, false)
             }
 
             positions[movedPiece] = id
