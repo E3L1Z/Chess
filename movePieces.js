@@ -42,7 +42,7 @@ function alphToNum(alpha){
     }
 }
 
-function piecePos(sqrPos, piecePos, type, ignore){
+function piecePos(sqrPos, piecePos, type, sqr){
     const sqrNumPos = [alphToNum(sqrPos[0]), parseInt(sqrPos[1])]
     const pieceNumPos = [alphToNum(positions[piecePos][0]), parseInt(positions[piecePos][1])]
     const x = sqrNumPos[0] - pieceNumPos[0]
@@ -54,7 +54,11 @@ function piecePos(sqrPos, piecePos, type, ignore){
     for(let i in positions){
         let pos = [alphToNum(positions[i][0]), parseInt(positions[i][1])]
 
-        if(pos.toString() == pieceNumPos.toString() || i == ignore){
+        if(i == movedPiece && sqr){
+            pos = [alphToNum(sqr[0]), parseInt(sqr[1])]
+        }
+
+        if(pos.toString() == pieceNumPos.toString()){
             continue
         }
 
@@ -279,67 +283,62 @@ function eat(id, castle){
     }
 }
 
-function check(kingPos, white, ignore){
+function check(kingPos, white, ignore, sqr){
     let kingNumPos = [alphToNum(kingPos[0]), parseInt(kingPos[1])]
     let inCheck = false
     let canMove = false
+    let hopOver = false
+    console.log(kingPos, sqr)
 
     for(let i in positions){
+        canMove = false
+        hopOver = false
+
         let pos = positions[i]
+        let numPos = [alphToNum(pos[0]), parseInt(pos[1])]
         if(white && i[0] == "w"){
             continue
         }
         if(!white && i[0] == "b"){
             continue
         }
+        console.log(pos)
 
         switch(i.split("_")[1]){
             case "Rook":
-                if(pos[0] == positions[movedPiece][0] || pos[1] == positions[movedPiece][1]) {
+                if(kingPos[0] == pos[0] || kingPos[1] == pos[1]) {
                     canMove = true
                 }
                 break
 
             case "Bishop":
-                if(Math.pow(sqrPosNum[0] - piecePosNum[0], 2) == Math.pow(sqrPosNum[1] - piecePosNum[1], 2)){
+                if(Math.pow(kingNumPos[0] - numPos[0], 2) == Math.pow(kingNumPos[1] - numPos[1], 2)){
                     canMove = true
                 }
                 break
 
             case "Queen":
-                if(Math.pow(sqrPosNum[0] - piecePosNum[0], 2) == Math.pow(sqrPosNum[1] - piecePosNum[1], 2)){
+                if(Math.pow(kingNumPos[0] - numPos[0], 2) == Math.pow(kingNumPos[1] - numPos[1], 2)){
                     canMove = true
                 }
 
-                if(pos[0] == positions[movedPiece][0] || pos[1] == positions[movedPiece][1]) {
+                if(kingPos[0] == pos[0] || kingPos[1] == pos[1]) {
                     canMove = true
                 }
                 break
 
             case "King":
-
-                if(Math.pow(sqrPosNum[0] - piecePosNum[0], 2) == 1 && Math.pow(sqrPosNum[1] - piecePosNum[1], 2) == 1){
+                if(Math.pow(kingNumPos[0] - numPos[0], 2) == 1 && Math.pow(kingNumPos[1] - numPos[1], 2) == 1){
                     canMove = true
                 }
 
-                if(pos[0] == positions[movedPiece][0] && Math.pow(parseInt(pos[1]) - parseInt(positions[movedPiece][1]), 2) == 1 || id[1] == positions[movedPiece][1] && Math.pow(parseInt(alphToNum(id[0])) - parseInt(alphToNum(positions[movedPiece][0])), 2) == 1) {
+                if(kingPos[0] == pos[0] && Math.pow(parseInt(kingPos[1]) - parseInt(pos[1]), 2) == 1 || kingPos[1] == pos[1] && Math.pow(parseInt(alphToNum(kingPos[0])) - parseInt(alphToNum(pos[0])), 2) == 1) {
                     canMove = true
                 }
                 break
 
             case "Pawn":
-
-                if(!moved[movedPiece]){
-                    if(pos[0] == positions[movedPiece][0] && parseInt(pos[1]) - parseInt(positions[movedPiece][1]) == 2 && moves % 2 == 0 || id[0] == positions[movedPiece][0] && parseInt(id[1]) - parseInt(positions[movedPiece][1]) == -2 && moves % 2 == 1){
-                        canMove = true
-                    }
-                }
-
-                if(pos[0] == positions[movedPiece][0] && parseInt(pos[1]) - parseInt(positions[movedPiece][1]) == 1 && moves % 2 == 0 || id[0] == positions[movedPiece][0] && parseInt(id[1]) - parseInt(positions[movedPiece][1]) == -1 && moves % 2 == 1){
-                    canMove = true
-                }
-
-                if(moves % 2 == 0 && sqrPosNum[0] - piecePosNum[0] == 1 && sqrPosNum[1] - piecePosNum[1] == 1 || moves % 2 == 0 && sqrPosNum[0] - piecePosNum[0] == -1 && sqrPosNum[1] - piecePosNum[1] == 1 || moves % 2 == 1 && sqrPosNum[0] - piecePosNum[0] == 1 && sqrPosNum[1] - piecePosNum[1] == -1 || moves % 2 == 1 && sqrPosNum[0] - piecePosNum[0] == -1 && sqrPosNum[1] - piecePosNum[1] == -1){
+                if(moves % 2 == 0 && kingNumPos[0] - numPos[0] == 1 && kingNumPos[1] - numPos[1] == 1 || moves % 2 == 0 && kingNumPos[0] - numPos[0] == -1 && kingNumPos[1] - numPos[1] == 1 || moves % 2 == 1 && kingNumPos[0] - numPos[0] == 1 && kingNumPos[1] - numPos[1] == -1 || moves % 2 == 1 && kingNumPos[0] - numPos[0] == -1 && kingNumPos[1] - numPos[1] == -1){
                     canMove = true
                 }
 
@@ -347,8 +346,10 @@ function check(kingPos, white, ignore){
 
             case "Knight":
 
-                let posX = Math.pow(sqrPosNum[0] - piecePosNum[0], 2)
-                let posY = Math.pow(sqrPosNum[1] - piecePosNum[1], 2)
+                let posX = Math.pow(kingNumPos[0] - numPos[0], 2)
+                let posY = Math.pow(kingNumPos[1] - numPos[1], 2)
+                hopOver = true
+
 
                 if(posX == 4 && posY == 1 || posX == 1 && posY == 4 ){
                     hopOver = true
@@ -358,8 +359,7 @@ function check(kingPos, white, ignore){
         }
 
         let type = i.split("_")[1]
-        if(piecePos(kingPos, i, type, ignore) && !hopOver && canMove){
-            console.log(i)
+        if(piecePos(kingPos, i, type, sqr) && !hopOver && canMove){
             inCheck = true
         }
     }
@@ -554,7 +554,7 @@ function sqrsPressed(obj){
 
         if(moves % 2 == 0) king = "white_King"
 
-        if(canMove && piecePos(id, movedPiece, pieceType) && canContinue && !check(positions[king], moves % 2 == 0) || hopOver && canContinue && !check(positions[king], moves % 2 == 0)){
+        if(canMove && piecePos(id, movedPiece, pieceType) && canContinue && !check(positions[king], moves % 2 == 0, king, id) || hopOver && canContinue && !check(positions[king], moves % 2 == 0, king, id)){
             num++
 
             if(movedDouble){
