@@ -42,7 +42,7 @@ function alphToNum(alpha){
     }
 }
 
-function piecePos(sqrPos, piecePos, type){
+function piecePos(sqrPos, piecePos, type, ignore){
     const sqrNumPos = [alphToNum(sqrPos[0]), parseInt(sqrPos[1])]
     const pieceNumPos = [alphToNum(positions[piecePos][0]), parseInt(positions[piecePos][1])]
     const x = sqrNumPos[0] - pieceNumPos[0]
@@ -51,12 +51,10 @@ function piecePos(sqrPos, piecePos, type){
     let pieceDiagonaly = false
     let movedDiagonaly = false
 
-    console.log(sqrNumPos, pieceNumPos)
-
     for(let i in positions){
         let pos = [alphToNum(positions[i][0]), parseInt(positions[i][1])]
 
-        if(pos.toString() == pieceNumPos.toString()){
+        if(pos.toString() == pieceNumPos.toString() || i == ignore){
             continue
         }
 
@@ -281,8 +279,92 @@ function eat(id, castle){
     }
 }
 
-function check(kingPos){
+function check(kingPos, white, ignore){
     let kingNumPos = [alphToNum(kingPos[0]), parseInt(kingPos[1])]
+    let inCheck = false
+    let canMove = false
+
+    for(let i in positions){
+        let pos = positions[i]
+        if(white && i[0] == "w"){
+            continue
+        }
+        if(!white && i[0] == "b"){
+            continue
+        }
+
+        switch(i.split("_")[1]){
+            case "Rook":
+                if(pos[0] == positions[movedPiece][0] || pos[1] == positions[movedPiece][1]) {
+                    canMove = true
+                }
+                break
+
+            case "Bishop":
+                if(Math.pow(sqrPosNum[0] - piecePosNum[0], 2) == Math.pow(sqrPosNum[1] - piecePosNum[1], 2)){
+                    canMove = true
+                }
+                break
+
+            case "Queen":
+                if(Math.pow(sqrPosNum[0] - piecePosNum[0], 2) == Math.pow(sqrPosNum[1] - piecePosNum[1], 2)){
+                    canMove = true
+                }
+
+                if(pos[0] == positions[movedPiece][0] || pos[1] == positions[movedPiece][1]) {
+                    canMove = true
+                }
+                break
+
+            case "King":
+
+                if(Math.pow(sqrPosNum[0] - piecePosNum[0], 2) == 1 && Math.pow(sqrPosNum[1] - piecePosNum[1], 2) == 1){
+                    canMove = true
+                }
+
+                if(pos[0] == positions[movedPiece][0] && Math.pow(parseInt(pos[1]) - parseInt(positions[movedPiece][1]), 2) == 1 || id[1] == positions[movedPiece][1] && Math.pow(parseInt(alphToNum(id[0])) - parseInt(alphToNum(positions[movedPiece][0])), 2) == 1) {
+                    canMove = true
+                }
+                break
+
+            case "Pawn":
+
+                if(!moved[movedPiece]){
+                    if(pos[0] == positions[movedPiece][0] && parseInt(pos[1]) - parseInt(positions[movedPiece][1]) == 2 && moves % 2 == 0 || id[0] == positions[movedPiece][0] && parseInt(id[1]) - parseInt(positions[movedPiece][1]) == -2 && moves % 2 == 1){
+                        canMove = true
+                    }
+                }
+
+                if(pos[0] == positions[movedPiece][0] && parseInt(pos[1]) - parseInt(positions[movedPiece][1]) == 1 && moves % 2 == 0 || id[0] == positions[movedPiece][0] && parseInt(id[1]) - parseInt(positions[movedPiece][1]) == -1 && moves % 2 == 1){
+                    canMove = true
+                }
+
+                if(moves % 2 == 0 && sqrPosNum[0] - piecePosNum[0] == 1 && sqrPosNum[1] - piecePosNum[1] == 1 || moves % 2 == 0 && sqrPosNum[0] - piecePosNum[0] == -1 && sqrPosNum[1] - piecePosNum[1] == 1 || moves % 2 == 1 && sqrPosNum[0] - piecePosNum[0] == 1 && sqrPosNum[1] - piecePosNum[1] == -1 || moves % 2 == 1 && sqrPosNum[0] - piecePosNum[0] == -1 && sqrPosNum[1] - piecePosNum[1] == -1){
+                    canMove = true
+                }
+
+                break
+
+            case "Knight":
+
+                let posX = Math.pow(sqrPosNum[0] - piecePosNum[0], 2)
+                let posY = Math.pow(sqrPosNum[1] - piecePosNum[1], 2)
+
+                if(posX == 4 && posY == 1 || posX == 1 && posY == 4 ){
+                    hopOver = true
+                }
+                break
+                
+        }
+
+        let type = i.split("_")[1]
+        if(piecePos(kingPos, i, type, ignore) && !hopOver && canMove){
+            console.log(i)
+            inCheck = true
+        }
+    }
+
+    return inCheck
 }
 
 function sqrsPressed(obj){
@@ -468,8 +550,11 @@ function sqrsPressed(obj){
                 break
                 
         }
+        let king = "black_King"
 
-        if(canMove && piecePos(id, movedPiece, pieceType) && canContinue || hopOver && canContinue){
+        if(moves % 2 == 0) king = "white_King"
+
+        if(canMove && piecePos(id, movedPiece, pieceType) && canContinue && !check(positions[king], moves % 2 == 0) || hopOver && canContinue && !check(positions[king], moves % 2 == 0)){
             num++
 
             if(movedDouble){
