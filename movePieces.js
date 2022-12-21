@@ -58,6 +58,11 @@ function piecePos(sqrPos, piecePos, type, sqr){
             pos = [alphToNum(sqr[0]), parseInt(sqr[1])]
         }
 
+        if(positions[i] == sqr){
+            canMove = false
+            break
+        }
+
         if(pos.toString() == pieceNumPos.toString()){
             continue
         }
@@ -338,6 +343,10 @@ function check(kingPos, white, ignore, sqr){
                 break
 
             case "Pawn":
+                if(moves % 2 == 0 && kingNumPos[0] - numPos[0] == 1 && kingNumPos[1] - numPos[1] == 1 || moves % 2 == 0 && kingNumPos[0] - numPos[0] == -1 && kingNumPos[1] - numPos[1] == 1 || moves % 2 == 1 && kingNumPos[0] - numPos[0] == 1 && kingNumPos[1] - numPos[1] == -1 || moves % 2 == 1 && kingNumPos[0] - numPos[0] == -1 && kingNumPos[1] - numPos[1] == -1){
+                    canMove = true
+                }
+
                 if(moves % 2 == 0 && kingNumPos[0] - numPos[0] == 1 && kingNumPos[1] - numPos[1] == 1 || moves % 2 == 0 && kingNumPos[0] - numPos[0] == -1 && kingNumPos[1] - numPos[1] == 1 || moves % 2 == 1 && kingNumPos[0] - numPos[0] == 1 && kingNumPos[1] - numPos[1] == -1 || moves % 2 == 1 && kingNumPos[0] - numPos[0] == -1 && kingNumPos[1] - numPos[1] == -1){
                     canMove = true
                 }
