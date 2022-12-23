@@ -148,35 +148,35 @@ function getPos(obj, ar){
     let x = 0
     switch(obj){
         case ar[0]:
-            x = 432
+            x = 420
             break
 
         case ar[1]:
-            x = 372
+            x = 360
             break
 
         case ar[2]:
-            x = 312
+            x = 300
             break
 
         case ar[3]:
-            x = 252
+            x = 240
             break
 
         case ar[4]:
-            x = 192
+            x = 180
             break
 
         case ar[5]:
-            x = 132
+            x = 120
             break
         
         case ar[6]:
-            x = 72
+            x = 60
             break
 
         case ar[7]:
-            x = 12
+            x = 0
             break
     }
 

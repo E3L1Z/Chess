@@ -1,6 +1,15 @@
 body{
     background-color: rgb(53, 119, 63);
 }
+img{
+    position: relative;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+    top: 3px;
+}
 .board{
     background-color: rgb(113, 64, 6);
     position: fixed;
@@ -19,13 +28,13 @@ body{
 .whites{
     position: absolute;;
     z-index: 2;
-    width: 55px;
-    height: 55px;;
+    width: 60px;
+    height: 60px;
 }
 .blacks{
     position: absolute;
     z-index: 2;
-    width: 55px;
-    height: 55px;
+    width: 60px;
+    height: 60px;
     pointer-events: none;
 }
