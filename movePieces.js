@@ -148,35 +148,35 @@ function getPos(obj, ar){
     let x = 0
     switch(obj){
         case ar[0]:
-            x = 420
+            x = 430
             break
 
         case ar[1]:
-            x = 360
+            x = 370
             break
 
         case ar[2]:
-            x = 300
+            x = 310
             break
 
         case ar[3]:
-            x = 240
+            x = 250
             break
 
         case ar[4]:
-            x = 180
+            x = 190
             break
 
         case ar[5]:
-            x = 120
+            x = 130
             break
         
         case ar[6]:
-            x = 60
+            x = 70
             break
 
         case ar[7]:
-            x = 0
+            x = 10
             break
     }
 
@@ -228,14 +228,14 @@ function upgradePawn(white, x){
         document.getElementById("knight").src = "images/knight_white.png"
         document.getElementById("rook").src = "images/rook_white.png"
         document.getElementById("queen").src = "images/queen_white.png"
-        document.getElementById(movedPiece).style.top = "12px"
+        document.getElementById(movedPiece).style.top = "10px"
         positions[movedPiece] = x + "8"
     } else {
         document.getElementById("bishop").src = "images/bishop_black.png"
         document.getElementById("knight").src = "images/knight_black.png"
         document.getElementById("rook").src = "images/rook_black.png"
         document.getElementById("queen").src = "images/queen_black.png"
-        document.getElementById(movedPiece).style.top = "432px"
+        document.getElementById(movedPiece).style.top = "430px"
         positions[movedPiece] = x + "1"
     }
 
@@ -288,12 +288,15 @@ function eat(id, castle){
     }
 }
 
-function check(kingPos, white, ignore, sqr){
+function check(kingPos, white, sqr){
+    if(movedPiece == "black_King"|| movedPiece == "white_King"){
+        kingPos = sqr
+    }
+
     let kingNumPos = [alphToNum(kingPos[0]), parseInt(kingPos[1])]
     let inCheck = false
     let canMove = false
     let hopOver = false
-    console.log(kingPos, sqr)
 
     for(let i in positions){
         canMove = false
@@ -307,7 +310,6 @@ function check(kingPos, white, ignore, sqr){
         if(!white && i[0] == "b"){
             continue
         }
-        console.log(pos)
 
         switch(i.split("_")[1]){
             case "Rook":
@@ -368,7 +370,7 @@ function check(kingPos, white, ignore, sqr){
         }
 
         let type = i.split("_")[1]
-        if(piecePos(kingPos, i, type, sqr) && !hopOver && canMove){
+        if(canMove && piecePos(kingPos, i, type, sqr) && !hopOver){
             inCheck = true
         }
     }
@@ -383,6 +385,9 @@ function sqrsPressed(obj){
     let x = getPos(id[0], ["A", "B", "C", "D", "E", "F", "G", "H"])
     
     if(movedPiece){
+        let king = "black_King"
+
+        if(moves % 2 == 0) king = "white_King"
         const sqrPosNum = [alphToNum(id[0]), parseInt(id[1])]
         const piecePosNum = [alphToNum(positions[movedPiece][0]), parseInt(positions[movedPiece][1])]
         let canMove = false
@@ -423,25 +428,25 @@ function sqrsPressed(obj){
                 if(!moved[movedPiece]){
                     if(moves % 2 == 0){
                         if(id == "G1" && !moved["white_Rook_1"]){
-                            if(piecePos(id, movedPiece, pieceType)){
-                                document.getElementById("white_Rook_1").style.right = `132px`
+                            if(piecePos(id, movedPiece, pieceType) && !check(positions["white_King"], true, "G1") && !check(positions["white_King"], true, "F1") && !check(positions["white_King"], true, "E1")){
+                                document.getElementById("white_Rook_1").style.right = `130px`
                                 document.getElementById(movedPiece).style.right = `${x}px`
                                 document.getElementById(movedPiece).style.opacity = 1
                                 eat(positions[movedPiece], true)
                                 moves++
                                 num++
-                                moved[movedPieces] = true
+                                moved[movedPiece] = true
                                 positions[movedPiece] = id
                                 movedPiece = ""
                                 positions["white_Rook_1"] = "F1"
                                 return
                             }
                         }
-                        else if(id == "C1" && !moved["white_Rook_2"]){
+                        else if(id == "C1" && !moved["white_Rook_2"] && !check(positions["white_King"], true, "C1") && !check(positions["white_King"], true, "D1") && !check(positions["white_King"], true, "E1")){
                             if(piecePos(id, movedPiece, pieceType)){
                                 document.getElementById(movedPiece).style.opacity = 1
-                                document.getElementById("white_Rook_2").style.right = `312px`
-                                moved[movedPieces] = true
+                                document.getElementById("white_Rook_2").style.right = `310px`
+                                moved[movedPiece] = true
                                 eat(positions[movedPiece], true)
                                 document.getElementById(movedPiece).style.right = `${x}px`
                                 num++
@@ -454,11 +459,11 @@ function sqrsPressed(obj){
                         }
                     }
                     else if(moves % 2 == 1){
-                        if(id == "G8" && !moved["black_Rook_1"]){
+                        if(id == "G8" && !moved["black_Rook_1"] && !check(positions["black_King"], true, "G8") && !check(positions["black_King"], true, "F8") && !check(positions["black_King"], true, "E8")){
                             if(piecePos(id, movedPiece, pieceType)){
                                 document.getElementById(movedPiece).style.opacity = 1
-                                document.getElementById("black_Rook_1").style.right = `132px`
-                                moved[movedPieces] = true
+                                document.getElementById("black_Rook_1").style.right = `130px`
+                                moved[movedPiece] = true
                                 eat(positions[movedPiece], true)
                                 document.getElementById(movedPiece).style.right = `${x}px`
                                 num++
@@ -469,11 +474,11 @@ function sqrsPressed(obj){
                                 return
                             }
                         }
-                        else if(id == "C8" && !moved["black_Rook_2"]){
+                        else if(id == "C8" && !moved["black_Rook_2"] && !check(positions["black_King"], true, "C8") && !check(positions["black_King"], true, "D8") && !check(positions["black_King"], true, "E8")){
                             if(piecePos(id, movedPiece, pieceType)){
                                 document.getElementById(movedPiece).style.opacity = 1
-                                document.getElementById("black_Rook_2").style.right = `312px`
-                                moved[movedPieces] = true
+                                document.getElementById("black_Rook_2").style.right = `310px`
+                                moved[movedPiece] = true
                                 eat(positions[movedPiece], true)
                                 document.getElementById(movedPiece).style.right = `${x}px`
                                 num++
@@ -559,11 +564,8 @@ function sqrsPressed(obj){
                 break
                 
         }
-        let king = "black_King"
-
-        if(moves % 2 == 0) king = "white_King"
-
-        if(canMove && piecePos(id, movedPiece, pieceType) && canContinue && !check(positions[king], moves % 2 == 0, king, id) || hopOver && canContinue && !check(positions[king], moves % 2 == 0, king, id)){
+        
+        if(canMove && piecePos(id, movedPiece, pieceType) && canContinue && !check(positions[king], moves % 2 == 0, id) || hopOver && canContinue && !check(positions[king], moves % 2 == 0, id)){
             num++
 
             if(movedDouble){
