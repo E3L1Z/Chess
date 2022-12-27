@@ -3,6 +3,7 @@ let moves = 0
 let canContinue = true
 let doupleMove = ""
 let num = 0
+let lastEaten = 0
 
 
 let morePieces = {Bishop: 3, Knight: 3, Rook: 3, Queen: 2}
@@ -264,6 +265,12 @@ function eat(id, castle){
         if(eatenPiece && !castle) {
             blackPieces.splice(blackPieces.findIndex((element) => element == eatenPiece), 1)
             delete positions[eatenPiece]
+            lastEaten = 0
+        } else{
+            lastEaten++
+            if(lastEaten == 5){
+                gameOver(true)
+            }
         }
     }
     if(moves % 2 == 1){
@@ -279,6 +286,12 @@ function eat(id, castle){
         if(eatenPiece && !castle) {
             whitePieces.splice(whitePieces.findIndex((element) => element == eatenPiece), 1)
             delete positions[eatenPiece]
+            lastEaten = 0
+        } else{
+            lastEaten++
+            if(lastEaten == 5){
+                gameOver(true)
+            }
         }
 
         for(let i of blackPieces){
@@ -376,6 +389,22 @@ function check(kingPos, white, sqr){
     }
 
     return inCheck
+}
+
+function gameOver(draw, winner){
+    for(let i in positions){
+        document.getElementById(i).style.pointerEvents = "none"
+    }
+
+    document.getElementById("pawnUpgrades").style.visibility = "hidden"
+    document.getElementById("gameOverText").style.visibility = "visible"
+
+    if(draw){
+        document.getElementById("gameOverText").innerHTML = "It's a draw!"
+        return
+    }
+
+    document.getElementById("gameOverText").innerHTML = `${winner} is thw winner!`
 }
 
 function sqrsPressed(obj){
