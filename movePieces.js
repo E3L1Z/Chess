@@ -4,6 +4,7 @@ let canContinue = true
 let doupleMove = ""
 let num = 0
 let lastEaten = 0
+let gameOverBool = false
 
 
 let morePieces = {Bishop: 3, Knight: 3, Rook: 3, Queen: 2}
@@ -268,7 +269,7 @@ function eat(id, castle){
             lastEaten = 0
         } else{
             lastEaten++
-            if(lastEaten == 5){
+            if(lastEaten == 75){
                 gameOver(true)
             }
         }
@@ -289,7 +290,7 @@ function eat(id, castle){
             lastEaten = 0
         } else{
             lastEaten++
-            if(lastEaten == 5){
+            if(lastEaten == 75){
                 gameOver(true)
             }
         }
@@ -392,12 +393,13 @@ function check(kingPos, white, sqr){
 }
 
 function gameOver(draw, winner){
+    gameOverBool = true
     for(let i in positions){
         document.getElementById(i).style.pointerEvents = "none"
     }
 
     document.getElementById("pawnUpgrades").style.visibility = "hidden"
-    document.getElementById("gameOverText").style.visibility = "visible"
+    document.getElementById("gameOverTextContainer").style.visibility = "visible"
 
     if(draw){
         document.getElementById("gameOverText").innerHTML = "It's a draw!"
@@ -408,6 +410,10 @@ function gameOver(draw, winner){
 }
 
 function sqrsPressed(obj){
+    if(gameOverBool){
+        document.getElementById("gameOverTextContainer").style.visibility = "hidden"
+        return
+    }
     let id = obj.id
 
     let y = getPos(id[1], ["1", "2", "3", "4", "5", "6", "7", "8"])
