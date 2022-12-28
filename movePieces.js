@@ -205,10 +205,13 @@ function movePiece(obj){
 function changePawn(toChange){
     let color = "white"
     if(moves % 2 == 1) color = "black"
+    console.log(`images/${toChange.toLowerCase()}_${color}.png`)
+
 
     document.getElementById("pawnUpgrades").style.visibility = "hidden"
     positions[`${color}_${toChange}_${morePieces[toChange]}`] = positions[movedPiece]
     delete positions[movedPiece]
+
     if(color == "white"){
         whitePieces.push(`${color}_${toChange}_${morePieces[toChange]}`)
         whitePieces.splice(whitePieces.findIndex((element) => element == movedPiece), 1)
@@ -216,6 +219,7 @@ function changePawn(toChange){
         blackPieces.push(`${color}_${toChange}_${morePieces[toChange]}`)
         blackPieces.splice(blackPieces.findIndex((element) => element == movedPiece), 1)
     }
+
     document.getElementById(movedPiece).src = `images/${toChange.toLowerCase()}_${color}.png`
     document.getElementById(movedPiece).style.opacity = 1
     document.getElementById(movedPiece).id = `${color}_${toChange}_${morePieces[toChange]}`
@@ -248,6 +252,8 @@ function upgradePawn(white, x){
 
 function eat(id, castle){
     let eatenPiece = null
+    let kingPos = positions["white_King"]
+    let pieces = whitePieces
 
     if(moves % 2 == 0){
         for(let i of whitePieces){
@@ -275,6 +281,9 @@ function eat(id, castle){
         }
     }
     if(moves % 2 == 1){
+        kingPos = positions["black_King"]
+        pieces = blackPieces
+
         for(let i of whitePieces){
             document.getElementById(i).style.pointerEvents = "auto"
 
@@ -300,6 +309,22 @@ function eat(id, castle){
         }
 
     }
+
+    if(!checkForMoves(moves % 2 == 0)){
+        for(let i of pieces){
+            if(check(kingPos, moves % 2 == 1, positions[i])){
+                let winner = "White"
+                if(moves % 2 == 1){
+                    winner = "Black"
+                }
+                gameOver(false, winner)
+    
+                return
+            }
+        }
+
+        gameOver(true)
+    }
 }
 
 function check(kingPos, white, sqr){
@@ -309,12 +334,10 @@ function check(kingPos, white, sqr){
 
     let kingNumPos = [alphToNum(kingPos[0]), parseInt(kingPos[1])]
     let inCheck = false
-    let canMove = false
-    let hopOver = false
 
     for(let i in positions){
-        canMove = false
-        hopOver = false
+        let canMove = false
+        let hopOver = false
 
         let pos = positions[i]
         let numPos = [alphToNum(pos[0]), parseInt(pos[1])]
@@ -373,8 +396,6 @@ function check(kingPos, white, sqr){
 
                 let posX = Math.pow(kingNumPos[0] - numPos[0], 2)
                 let posY = Math.pow(kingNumPos[1] - numPos[1], 2)
-                hopOver = true
-
 
                 if(posX == 4 && posY == 1 || posX == 1 && posY == 4 ){
                     hopOver = true
@@ -384,7 +405,7 @@ function check(kingPos, white, sqr){
         }
 
         let type = i.split("_")[1]
-        if(canMove && piecePos(kingPos, i, type, sqr) && !hopOver){
+        if(canMove && piecePos(kingPos, i, type, sqr) || hopOver){
             inCheck = true
         }
     }
@@ -407,6 +428,92 @@ function gameOver(draw, winner){
     }
 
     document.getElementById("gameOverText").innerHTML = `${winner} is thw winner!`
+}
+
+function checkForMoves(white){
+    let pieces = whitePieces
+    let kingPos = positions["white_King"]
+
+    if(!white){
+        pieces = blackPieces
+        kingPos = positions["black_King"]
+    }
+
+    for(let i of pieces){
+        let type = i.split("_")[1]
+        let pos = positions[i]
+        let numPos = [alphToNum(pos[0]), parseInt(pos[1])]
+        let canMove = false
+        let hopOver = false
+
+        for(let x in ["A", "B", "C", "D", "E", "F", "G", "H"]){
+            for(let z = 1; z <= 8; z++){
+                let sqr = x + z.toString()
+                let numSqr = [alphToNum(sqr[0]), parseInt(sqr[1])]
+
+                switch(i.split("_")[1]){
+                    case "Rook":
+                        if(sqr[0] == pos[0] || sqr[1] == pos[1]) {
+                            canMove = true
+                        }
+                        break
+        
+                    case "Bishop":
+                        if(Math.pow(numSqr[0] - numPos[0], 2) == Math.pow(numSqr[1] - numPos[1], 2)){
+                            canMove = true
+                        }
+                        break
+        
+                    case "Queen":
+                        if(Math.pow(numSqr[0] - numPos[0], 2) == Math.pow(numSqr[1] - numPos[1], 2)){
+                            canMove = true
+                        }
+        
+                        if(sqr[0] == pos[0] || sqr[1] == pos[1]) {
+                            canMove = true
+                        }
+                        break
+        
+                    case "King":
+                        if(Math.pow(numSqr[0] - numPos[0], 2) == 1 && Math.pow(numSqr[1] - numPos[1], 2) == 1){
+                            canMove = true
+                        }
+        
+                        if(sqr[0] == pos[0] && Math.pow(parseInt(sqr[1]) - parseInt(pos[1]), 2) == 1 || sqr[1] == pos[1] && Math.pow(parseInt(alphToNum(sqr[0])) - parseInt(alphToNum(pos[0])), 2) == 1) {
+                            canMove = true
+                        }
+                        break
+        
+                    case "Pawn":
+                        if(moves % 2 == 0 && numSqr[0] - numPos[0] == 1 && numSqr[1] - numPos[1] == 1 || moves % 2 == 0 && numSqr[0] - numPos[0] == -1 && numSqr[1] - numPos[1] == 1 || moves % 2 == 1 && numSqr[0] - numPos[0] == 1 && numSqr[1] - numPos[1] == -1 || moves % 2 == 1 && numSqr[0] - numPos[0] == -1 && numSqr[1] - numPos[1] == -1){
+                            canMove = true
+                        }
+        
+                        if(moves % 2 == 0 && numSqr[0] - numPos[0] == 1 && numSqr[1] - numPos[1] == 1 || moves % 2 == 0 && numSqr[0] - numPos[0] == -1 && numSqr[1] - numPos[1] == 1 || moves % 2 == 1 && numSqr[0] - numPos[0] == 1 && numSqr[1] - numPos[1] == -1 || moves % 2 == 1 && numSqr[0] - numPos[0] == -1 && numSqr[1] - numPos[1] == -1){
+                            canMove = true
+                        }
+        
+                        break
+        
+                    case "Knight":
+        
+                        let posX = Math.pow(numSqr[0] - numPos[0], 2)
+                        let posY = Math.pow(numSqr[1] - numPos[1], 2)
+        
+                        if(posX == 4 && posY == 1 || posX == 1 && posY == 4 ){
+                            hopOver = true
+                        }
+                        break       
+                }
+
+                if(piecePos(sqr, i, type) && !check(kingPos, white, sqr) && canMove || hopOver){
+                    return true
+                }
+            }
+        }
+    }
+
+    return false
 }
 
 function sqrsPressed(obj){
