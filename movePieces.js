@@ -205,8 +205,6 @@ function movePiece(obj){
 function changePawn(toChange){
     let color = "white"
     if(moves % 2 == 1) color = "black"
-    console.log(`images/${toChange.toLowerCase()}_${color}.png`)
-
 
     document.getElementById("pawnUpgrades").style.visibility = "hidden"
     positions[`${color}_${toChange}_${morePieces[toChange]}`] = positions[movedPiece]
@@ -220,9 +218,10 @@ function changePawn(toChange){
         blackPieces.splice(blackPieces.findIndex((element) => element == movedPiece), 1)
     }
 
-    document.getElementById(movedPiece).src = `images/${toChange.toLowerCase()}_${color}.png`
+    document.getElementById(movedPiece + "_Img").src = `images/${toChange.toLowerCase()}_${color}.png`
     document.getElementById(movedPiece).style.opacity = 1
     document.getElementById(movedPiece).id = `${color}_${toChange}_${morePieces[toChange]}`
+    document.getElementById(movedPiece + "_Img").id = `${color}_${toChange}_${morePieces[toChange]}_Img`
     movedPiece = ""
     canContinue = true
     moves += 1
@@ -311,6 +310,7 @@ function eat(id, castle){
     }
 
     if(!checkForMoves(moves % 2 == 0)){
+        console.log("Ran")
         for(let i of pieces){
             if(check(kingPos, moves % 2 == 1, positions[i])){
                 let winner = "White"
@@ -432,24 +432,33 @@ function gameOver(draw, winner){
 
 function checkForMoves(white){
     let pieces = whitePieces
-    let kingPos = positions["white_King"]
+    let kingPos = positions["black_King"]
 
     if(!white){
         pieces = blackPieces
-        kingPos = positions["black_King"]
+        kingPos = positions["white_King"]
     }
 
     for(let i of pieces){
         let type = i.split("_")[1]
         let pos = positions[i]
         let numPos = [alphToNum(pos[0]), parseInt(pos[1])]
-        let canMove = false
-        let hopOver = false
 
-        for(let x in ["A", "B", "C", "D", "E", "F", "G", "H"]){
+        for(let x of ["A", "B", "C", "D", "E", "F", "G", "H"]){
             for(let z = 1; z <= 8; z++){
+                let canMove = false
+                let hopOver = false
                 let sqr = x + z.toString()
                 let numSqr = [alphToNum(sqr[0]), parseInt(sqr[1])]
+                let Continue = true
+
+                for(let piece of pieces){
+                    if(positions[piece] == sqr){
+                        Continue = false
+                    }
+                } 
+
+                if(!Continue) continue
 
                 switch(i.split("_")[1]){
                     case "Rook":
@@ -502,11 +511,16 @@ function checkForMoves(white){
         
                         if(posX == 4 && posY == 1 || posX == 1 && posY == 4 ){
                             hopOver = true
+                            console.log("hopOver")
+
                         }
                         break       
                 }
 
-                if(piecePos(sqr, i, type) && !check(kingPos, white, sqr) && canMove || hopOver){
+                console.log(i, sqr, "pos", pos, "piecePos", piecePos(sqr, i, type), "check", check(kingPos, white, sqr), "canMove", canMove, "hopOver", hopOver)
+
+                if(piecePos(sqr, i, type) && !check(kingPos, white, sqr) && canMove || hopOver && !check(kingPos, white, sqr)){
+                    console.log("No moves")
                     return true
                 }
             }
@@ -569,8 +583,8 @@ function sqrsPressed(obj){
             case "King":
                 if(!moved[movedPiece]){
                     if(moves % 2 == 0){
-                        if(id == "G1" && !moved["white_Rook_1"]){
-                            if(piecePos(id, movedPiece, pieceType) && !check(positions["white_King"], true, "G1") && !check(positions["white_King"], true, "F1") && !check(positions["white_King"], true, "E1")){
+                        if(id == "G1" && !moved["white_Rook_1"] && !check(positions["white_King"], true, "G1") && !check(positions["white_King"], true, "F1") && !check(positions["white_King"], true, "E1")){
+                            if(piecePos(id, movedPiece, pieceType)){
                                 document.getElementById("white_Rook_1").style.right = `130px`
                                 document.getElementById(movedPiece).style.right = `${x}px`
                                 document.getElementById(movedPiece).style.opacity = 1
@@ -587,7 +601,7 @@ function sqrsPressed(obj){
                         else if(id == "C1" && !moved["white_Rook_2"] && !check(positions["white_King"], true, "C1") && !check(positions["white_King"], true, "D1") && !check(positions["white_King"], true, "E1")){
                             if(piecePos(id, movedPiece, pieceType)){
                                 document.getElementById(movedPiece).style.opacity = 1
-                                document.getElementById("white_Rook_2").style.right = `310px`
+                                document.getElementById("white_Rook_2").style.right = `250px`
                                 moved[movedPiece] = true
                                 eat(positions[movedPiece], true)
                                 document.getElementById(movedPiece).style.right = `${x}px`
@@ -600,8 +614,8 @@ function sqrsPressed(obj){
                             }
                         }
                     }
-                    else if(moves % 2 == 1){
-                        if(id == "G8" && !moved["black_Rook_1"] && !check(positions["black_King"], true, "G8") && !check(positions["black_King"], true, "F8") && !check(positions["black_King"], true, "E8")){
+                    else{
+                        if(id == "G8" && !moved["black_Rook_1"] && !check(positions["black_King"], false, "G8") && !check(positions["black_King"], false, "F8") && !check(positions["black_King"], false, "E8")){
                             if(piecePos(id, movedPiece, pieceType)){
                                 document.getElementById(movedPiece).style.opacity = 1
                                 document.getElementById("black_Rook_1").style.right = `130px`
@@ -616,10 +630,10 @@ function sqrsPressed(obj){
                                 return
                             }
                         }
-                        else if(id == "C8" && !moved["black_Rook_2"] && !check(positions["black_King"], true, "C8") && !check(positions["black_King"], true, "D8") && !check(positions["black_King"], true, "E8")){
+                        else if(id == "C8" && !moved["black_Rook_2"] && !check(positions["black_King"], false, "C8") && !check(positions["black_King"], false, "D8") && !check(positions["black_King"], false, "E8")){
                             if(piecePos(id, movedPiece, pieceType)){
                                 document.getElementById(movedPiece).style.opacity = 1
-                                document.getElementById("black_Rook_2").style.right = `310px`
+                                document.getElementById("black_Rook_2").style.right = `250px`
                                 moved[movedPiece] = true
                                 eat(positions[movedPiece], true)
                                 document.getElementById(movedPiece).style.right = `${x}px`
