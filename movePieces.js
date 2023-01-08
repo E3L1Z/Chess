@@ -60,14 +60,14 @@ function piecePos(sqrPos, piecePos, type, sqr){
             pos = [alphToNum(sqr[0]), parseInt(sqr[1])]
         }
 
+        if(pos.toString() == pieceNumPos.toString()){
+            continue
+        }
         if(positions[i] == sqr){
             canMove = false
             break
         }
 
-        if(pos.toString() == pieceNumPos.toString()){
-            continue
-        }
 
         if(type == "Pawn"){
             if(sqrNumPos[0] == pieceNumPos[0]){
@@ -198,8 +198,6 @@ function movePiece(obj){
         movedPiece = id
         document.getElementById(id).style.opacity = 0.7
     }
-
-    console.log(id)
 }
 
 function changePawn(toChange){
@@ -251,8 +249,7 @@ function upgradePawn(white, x){
 
 function eat(id, castle){
     let eatenPiece = null
-    let kingPos = positions["white_King"]
-    let pieces = whitePieces
+    let kingPos = positions["black_King"]
 
     if(moves % 2 == 0){
         for(let i of whitePieces){
@@ -274,14 +271,13 @@ function eat(id, castle){
             lastEaten = 0
         } else{
             lastEaten++
-            if(lastEaten == 75){
+            if(lastEaten == 50){
                 gameOver(true)
             }
         }
     }
     if(moves % 2 == 1){
-        kingPos = positions["black_King"]
-        pieces = blackPieces
+        kingPos = positions["white_King"]
 
         for(let i of whitePieces){
             document.getElementById(i).style.pointerEvents = "auto"
@@ -298,7 +294,7 @@ function eat(id, castle){
             lastEaten = 0
         } else{
             lastEaten++
-            if(lastEaten == 75){
+            if(lastEaten == 50){
                 gameOver(true)
             }
         }
@@ -308,27 +304,23 @@ function eat(id, castle){
         }
 
     }
+    if(check(kingPos, moves % 2 == 1, positions[movedPiece])){
+        if(!checkForMoves(moves % 2 == 1)){
+            let winner = "White"
 
-    if(!checkForMoves(moves % 2 == 0)){
-        console.log("Ran")
-        for(let i of pieces){
-            if(check(kingPos, moves % 2 == 1, positions[i])){
-                let winner = "White"
-                if(moves % 2 == 1){
-                    winner = "Black"
-                }
-                gameOver(false, winner)
+            if(moves % 2 == 1) winner = "Black"
+
+            gameOver(false, winner)
     
-                return
-            }
+            return
         }
-
+    } else if(!checkForMoves(moves % 2 == 1)){
         gameOver(true)
     }
 }
 
 function check(kingPos, white, sqr){
-    if(movedPiece == "black_King"|| movedPiece == "white_King"){
+    if(movedPiece == "black_King" && sqr|| movedPiece == "white_King" && sqr){
         kingPos = sqr
     }
 
@@ -405,6 +397,7 @@ function check(kingPos, white, sqr){
         }
 
         let type = i.split("_")[1]
+
         if(canMove && piecePos(kingPos, i, type, sqr) || hopOver){
             inCheck = true
         }
@@ -427,16 +420,16 @@ function gameOver(draw, winner){
         return
     }
 
-    document.getElementById("gameOverText").innerHTML = `${winner} is thw winner!`
+    document.getElementById("gameOverText").innerHTML = `${winner} is the winner!`
 }
 
 function checkForMoves(white){
     let pieces = whitePieces
-    let kingPos = positions["black_King"]
+    let kingPos = positions["white_King"]
 
     if(!white){
         pieces = blackPieces
-        kingPos = positions["white_King"]
+        kingPos = positions["black_King"]
     }
 
     for(let i of pieces){
@@ -498,7 +491,7 @@ function checkForMoves(white){
                             canMove = true
                         }
         
-                        if(moves % 2 == 0 && numSqr[0] - numPos[0] == 1 && numSqr[1] - numPos[1] == 1 || moves % 2 == 0 && numSqr[0] - numPos[0] == -1 && numSqr[1] - numPos[1] == 1 || moves % 2 == 1 && numSqr[0] - numPos[0] == 1 && numSqr[1] - numPos[1] == -1 || moves % 2 == 1 && numSqr[0] - numPos[0] == -1 && numSqr[1] - numPos[1] == -1){
+                        if(sqr[0] == pos[0] && parseInt(sqr[1]) - parseInt(pos[1]) == 1 && moves % 2 == 0 || sqr[0] == pos[0] && parseInt(sqr[1]) - parseInt(pos[1]) == -1 && moves % 2 == 1){
                             canMove = true
                         }
         
@@ -511,16 +504,12 @@ function checkForMoves(white){
         
                         if(posX == 4 && posY == 1 || posX == 1 && posY == 4 ){
                             hopOver = true
-                            console.log("hopOver")
 
                         }
                         break       
                 }
 
-                console.log(i, sqr, "pos", pos, "piecePos", piecePos(sqr, i, type), "check", check(kingPos, white, sqr), "canMove", canMove, "hopOver", hopOver)
-
-                if(piecePos(sqr, i, type) && !check(kingPos, white, sqr) && canMove || hopOver && !check(kingPos, white, sqr)){
-                    console.log("No moves")
+                if(piecePos(sqr, i, type) && !check(kingPos, white, positions[movedPiece]) && canMove || hopOver && !check(kingPos, white, positions[movedPiece])){
                     return true
                 }
             }
@@ -674,12 +663,14 @@ function sqrsPressed(obj){
                         if(id[1] == "8"){
                             upgradePawn(true, id[0])
                             canContinue = false
+                            lastEaten = 0
                             return
                         }
                     } else if(piecePos(id, movedPiece, pieceType)){
                         if(id[1] == "1"){
                             upgradePawn(false, id[0])
                             canContinue = false
+                            lastEaten = 0
                             return
                         }
                     }
@@ -694,12 +685,14 @@ function sqrsPressed(obj){
                     if(moves % 2 == 0 && piecePos(id, movedPiece, pieceType)){
                         if(id[1] == "8"){
                             upgradePawn(true, id[0])
+                            lastEaten = 0
                             canContinue = false
                             return
                         }
                     } else if(piecePos(id, movedPiece, pieceType)){
                         if(id[1] == "1"){
                             upgradePawn(false, id[0])
+                            lastEaten = 0
                             canContinue = false
                             return
                         }
@@ -723,6 +716,11 @@ function sqrsPressed(obj){
         
         if(canMove && piecePos(id, movedPiece, pieceType) && canContinue && !check(positions[king], moves % 2 == 0, id) || hopOver && canContinue && !check(positions[king], moves % 2 == 0, id)){
             num++
+            positions[movedPiece] = id
+
+            if(movedPiece.split("_")[1] == "Pawn"){
+                lastEaten = 0
+            }
 
             if(movedDouble){
                 num = 0
@@ -743,8 +741,6 @@ function sqrsPressed(obj){
             } else {
                 eat(id, false)
             }
-
-            positions[movedPiece] = id
 
             moves++
 
