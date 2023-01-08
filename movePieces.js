@@ -6,6 +6,7 @@ let num = 0
 let lastEaten = 0
 let gameOverBool = false
 
+let drawPieces = ["King", "Knight", "Bishop"]
 
 let morePieces = {Bishop: 3, Knight: 3, Rook: 3, Queen: 2}
 
@@ -317,6 +318,24 @@ function eat(id, castle){
     } else if(!checkForMoves(moves % 2 == 1)){
         gameOver(true)
     }
+
+    let draw = true
+    let pieceAmmount = [0, 0]
+
+    for(let i in positions){
+        if(i.split("_")[0] == "white"){
+            pieceAmmount[0]++
+        } else{
+            pieceAmmount[1]++
+        }
+
+        if(!drawPieces.includes(i.split("_")[1]) || pieceAmmount[0] > 2 || pieceAmmount[1] > 2)
+        {
+            draw = false
+        }
+    }
+
+    if(draw) gameOver(true)
 }
 
 function check(kingPos, white, sqr){
