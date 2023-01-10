@@ -189,6 +189,8 @@ function getPos(obj, ar){
 function movePiece(obj){
     let id = obj.id
 
+    console.log(id)
+
     if(movedPiece == id && canContinue){
         movedPiece = ""
         document.getElementById(id).style.opacity = 1
@@ -338,8 +340,8 @@ function eat(id, castle){
     if(draw) gameOver(true)
 }
 
-function check(kingPos, white, sqr){
-    if(movedPiece == "black_King" && sqr|| movedPiece == "white_King" && sqr){
+function check(kingPos, white, sqr, king){
+    if(movedPiece == "black_King" && sqr|| movedPiece == "white_King" && sqr || king && sqr){
         kingPos = sqr
     }
 
@@ -417,7 +419,7 @@ function check(kingPos, white, sqr){
 
         let type = i.split("_")[1]
 
-        if(canMove && piecePos(kingPos, i, type, sqr) || hopOver){
+        if(canMove && piecePos(kingPos, movedPiece, movedPiece.split("_")[1], sqr) || hopOver){
             inCheck = true
         }
     }
@@ -453,6 +455,7 @@ function checkForMoves(white){
 
     for(let i of pieces){
         let type = i.split("_")[1]
+        let king = type == "King"
         let pos = positions[i]
         let numPos = [alphToNum(pos[0]), parseInt(pos[1])]
 
@@ -510,8 +513,9 @@ function checkForMoves(white){
                             canMove = true
                         }
         
-                        if(sqr[0] == pos[0] && parseInt(sqr[1]) - parseInt(pos[1]) == 1 && moves % 2 == 0 || sqr[0] == pos[0] && parseInt(sqr[1]) - parseInt(pos[1]) == -1 && moves % 2 == 1){
+                        if(numSqr[0] == numPos[0] && numSqr[1] - numPos[1] == 1 && moves % 2 == 0 || numSqr[0] == numPos[0] && numSqr[1] - numPos[1] == -1 && moves % 2 == 1){
                             canMove = true
+                            console.log(canMove)
                         }
         
                         break
@@ -528,7 +532,8 @@ function checkForMoves(white){
                         break       
                 }
 
-                if(piecePos(sqr, i, type) && !check(kingPos, white, positions[movedPiece]) && canMove || hopOver && !check(kingPos, white, positions[movedPiece])){
+                if(piecePos(sqr, i, type) && !check(kingPos, white, sqr, king) && canMove || hopOver && !check(kingPos, white, sqr, king)){
+                    console.log(i, pos, sqr)
                     return true
                 }
             }
