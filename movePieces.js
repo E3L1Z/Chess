@@ -4,6 +4,7 @@ let canContinue = true
 let doupleMove = ""
 let num = 0
 let lastEaten = 0
+let lastCheckPiece = "black_King"
 let gameOverBool = false
 
 let drawPieces = ["King", "Knight", "Bishop"]
@@ -188,13 +189,26 @@ function getPos(obj, ar){
 
 function movePiece(obj){
     let id = obj.id
+    let kingPos = positions["white_King"]
+
+    if(moves % 2 == 0){
+        pieces = blackPieces
+        kingPos = positions["black_King"]
+    }
 
     console.log(id)
 
     if(movedPiece == id && canContinue){
         movedPiece = ""
         document.getElementById(id).style.opacity = 1
-    } else if(canContinue){
+    } else if(canContinue && !check(kingPos, moves % 2 == 1, positions[movedPiece], movedPiece.split("_")[1] == "King")){
+        lastCheckPiece = "black_King"
+        if(movedPiece){
+            document.getElementById(movedPiece).style.opacity = 1
+        }
+        movedPiece = id
+        document.getElementById(id).style.opacity = 0.7
+    } else if(check(kingPos, moves % 2 == 1, positions[movedPiece], movedPiece.split("_")[1] == "King")){
         if(movedPiece){
             document.getElementById(movedPiece).style.opacity = 1
         }
@@ -307,7 +321,7 @@ function eat(id, castle){
         }
 
     }
-    if(check(kingPos, moves % 2 == 1, positions[movedPiece])){
+    if(check(kingPos, moves % 2 == 1, positions[lastCheckPiece])){
         if(!checkForMoves(moves % 2 == 1)){
             let winner = "White"
 
@@ -341,7 +355,7 @@ function eat(id, castle){
 }
 
 function check(kingPos, white, sqr, king){
-    if(movedPiece == "black_King" && sqr|| movedPiece == "white_King" && sqr || king && sqr){
+    if(lastCheckPiece == "black_King" && sqr|| lastCheckPiece == "white_King" && sqr || king && sqr){
         kingPos = sqr
     }
 
@@ -399,7 +413,7 @@ function check(kingPos, white, sqr, king){
                     canMove = true
                 }
 
-                if(moves % 2 == 0 && kingNumPos[0] - numPos[0] == 1 && kingNumPos[1] - numPos[1] == 1 || moves % 2 == 0 && kingNumPos[0] - numPos[0] == -1 && kingNumPos[1] - numPos[1] == 1 || moves % 2 == 1 && kingNumPos[0] - numPos[0] == 1 && kingNumPos[1] - numPos[1] == -1 || moves % 2 == 1 && kingNumPos[0] - numPos[0] == -1 && kingNumPos[1] - numPos[1] == -1){
+                if(kingNumPos[0] == numPos[0] && kingNumPos[1] - numPos[1] == 1 && moves % 2 == 0 || kingNumPos[0] == numPos[0] && kingNumPos[1] - numPos[1] == -1 && moves % 2 == 1){
                     canMove = true
                 }
 
@@ -417,11 +431,11 @@ function check(kingPos, white, sqr, king){
                 
         }
 
-        let type = i.split("_")[1]
-
-        if(canMove && piecePos(kingPos, movedPiece, movedPiece.split("_")[1], sqr) || hopOver){
+        if(canMove && piecePos(kingPos, lastCheckPiece, lastCheckPiece.split("_")[1], sqr) || hopOver){
             inCheck = true
         }
+        console.log(i)
+
     }
 
     return inCheck
@@ -464,6 +478,7 @@ function checkForMoves(white){
                 let canMove = false
                 let hopOver = false
                 let sqr = x + z.toString()
+                console.log("Ran", sqr, i)
                 let numSqr = [alphToNum(sqr[0]), parseInt(sqr[1])]
                 let Continue = true
 
@@ -513,7 +528,7 @@ function checkForMoves(white){
                             canMove = true
                         }
         
-                        if(numSqr[0] == numPos[0] && numSqr[1] - numPos[1] == 1 && moves % 2 == 0 || numSqr[0] == numPos[0] && numSqr[1] - numPos[1] == -1 && moves % 2 == 1){
+                        if(numSqr[0] == numPos[0] && numSqr[1] - numPos[1] == 1 && moves % 2 == 1 || numSqr[0] == numPos[0] && numSqr[1] - numPos[1] == -1 && moves % 2 == 0){
                             canMove = true
                             console.log(canMove)
                         }
