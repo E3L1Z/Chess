@@ -4,7 +4,7 @@ let canContinue = true
 let doupleMove = ""
 let num = 0
 let lastEaten = 0
-let lastCheckPiece = "black_King"
+let lastCheckPiece = ""
 let gameOverBool = false
 
 let drawPieces = ["King", "Knight", "Bishop"]
@@ -202,7 +202,7 @@ function movePiece(obj){
         movedPiece = ""
         document.getElementById(id).style.opacity = 1
     } else if(canContinue && !check(kingPos, moves % 2 == 1, positions[movedPiece], movedPiece.split("_")[1] == "King")){
-        lastCheckPiece = "black_King"
+        lastCheckPiece = ""
         if(movedPiece){
             document.getElementById(movedPiece).style.opacity = 1
         }
@@ -321,7 +321,19 @@ function eat(id, castle){
         }
 
     }
-    if(check(kingPos, moves % 2 == 1, positions[lastCheckPiece])){
+    if(lastCheckPiece && check(kingPos, moves % 2 == 1, positions[lastCheckPiece])){
+        lastCheckPiece = movedPiece
+        if(!checkForMoves(moves % 2 == 1)){
+            let winner = "White"
+
+            if(moves % 2 == 1) winner = "Black"
+
+            gameOver(false, winner)
+    
+            return
+        }
+    } else if(check(kingPos, moves % 2 == 1, positions[movedPiece])){
+        lastCheckPiece = movedPiece
         if(!checkForMoves(moves % 2 == 1)){
             let winner = "White"
 
@@ -332,6 +344,7 @@ function eat(id, castle){
             return
         }
     } else if(!checkForMoves(moves % 2 == 1)){
+        lastCheckPiece = ""
         gameOver(true)
     }
 
@@ -355,7 +368,7 @@ function eat(id, castle){
 }
 
 function check(kingPos, white, sqr, king){
-    if(lastCheckPiece == "black_King" && sqr|| lastCheckPiece == "white_King" && sqr || king && sqr){
+    if(movedPiece == "black_King" && sqr|| movedPiece == "white_King" && sqr || king && sqr){
         kingPos = sqr
     }
 
@@ -431,7 +444,7 @@ function check(kingPos, white, sqr, king){
                 
         }
 
-        if(canMove && piecePos(kingPos, lastCheckPiece, lastCheckPiece.split("_")[1], sqr) || hopOver){
+        if(lastCheckPiece && canMove && piecePos(kingPos, lastCheckPiece, lastCheckPiece.split("_")[1], sqr) || hopOver || canMove && piecePos(kingPos, movedPiece, movedPiece.split("_")[1], sqr)){
             inCheck = true
         }
         console.log(i)
