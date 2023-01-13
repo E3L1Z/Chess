@@ -443,7 +443,8 @@ function check(kingPos, white, sqr, king){
                 
         }
 
-        if(lastCheckPiece && canMove && piecePos(kingPos, lastCheckPiece, lastCheckPiece.split("_")[1], sqr) || hopOver || canMove && piecePos(kingPos, movedPiece, movedPiece.split("_")[1], sqr)){
+        console.log(white, i)
+        if(canMove && piecePos(kingPos, i, i.split("_")[1], sqr) || hopOver){
             inCheck = true
         }
 
@@ -477,7 +478,6 @@ function checkForMoves(white){
         pieces = blackPieces
         kingPos = positions["black_King"]
     }
-    console.log("CheckForMoves", pieces)
 
     for(let i of pieces){
         let type = i.split("_")[1]
@@ -557,7 +557,7 @@ function checkForMoves(white){
                         break       
                 }
 
-                console.log(i, sqr, pos, piecePos(sqr, i, type), !check(kingPos, white, sqr, king), canMove)
+                console.log(i, sqr, pos, kingPos, piecePos(sqr, i, type), !check(kingPos, !white, sqr, king), canMove)
                 if(piecePos(sqr, i, type) && !check(kingPos, white, sqr, king) && canMove || hopOver && !check(kingPos, white, sqr, king)){
                     return true
                 }
