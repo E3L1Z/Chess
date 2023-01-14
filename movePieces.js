@@ -367,8 +367,9 @@ function eat(id, castle){
     if(draw) gameOver(true)
 }
 
-function check(kingPos, white, sqr){
-    if(movedPiece == "black_King" && sqr|| movedPiece == "white_King" && sqr){
+function check(kingPos, white, sqr, king){
+    console.log("\n\n\nNew Check check")
+    if(movedPiece == "black_King" && sqr|| movedPiece == "white_King" && sqr || king && sqr){
         kingPos = sqr
     }
 
@@ -483,6 +484,7 @@ function checkForMoves(white){
 
     for(let i of pieces){
         let type = i.split("_")[1]
+        let king = type == "King"
         let pos = positions[i]
         let numPos = [alphToNum(pos[0]), parseInt(pos[1])]
 
@@ -558,7 +560,8 @@ function checkForMoves(white){
                         break       
                 }
 
-                if(piecePos(sqr, i, type) && !check(kingPos, white, positions[movedPiece]) && canMove || hopOver && !check(kingPos, white, positions[movedPiece])){
+                console.log(i, sqr, pos, !check(kingPos, moves % 2 == 1, positions[movedPiece]))
+                if(piecePos(sqr, i, type) && !check(kingPos, moves % 2 == 1, positions[movedPiece], king) && canMove || hopOver && !check(kingPos, moves % 2 == 1, king)){
                     return true
                 }
             }
