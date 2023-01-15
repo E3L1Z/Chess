@@ -769,9 +769,9 @@ function sqrsPressed(obj){
                 
         }
         
-        console.log(king, canMove, piecePos(id, movedPiece, pieceType), !check(positions[king], moves % 2 == 1, id))
+        console.log(king, canMove, piecePos(id, movedPiece, pieceType), !check(positions[king], moves % 2 == 1, id, null, {id: movedPiece, pos: id}))
 
-        if(canMove && piecePos(id, movedPiece, pieceType) && canContinue && !check(positions[king], moves % 2 == 0, id) || hopOver && canContinue && !check(positions[king], moves % 2 == 0, id)){
+        if(canMove && piecePos(id, movedPiece, pieceType) && canContinue && !check(positions[king], moves % 2 == 0, id, king ? true : false, {id: movedPiece, pos: id}) || hopOver && canContinue && !check(positions[king], moves % 2 == 0, id, null, {id: movedPiece, pos: id})){
             num++
             positions[movedPiece] = id
 
