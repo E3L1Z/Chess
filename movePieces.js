@@ -321,9 +321,8 @@ function eat(id, castle){
         }
 
     }
-    console.log("check", lastCheckPiece, check(kingPos, moves % 2 == 1, positions[movedPiece]))
-    if(lastCheckPiece && check(kingPos, moves % 2 == 0, positions[lastCheckPiece])){
-        console.log("Last")
+    //console.log("check", lastCheckPiece, check(kingPos, moves % 2 == 1, positions[movedPiece]))
+    if(lastCheckPiece && check(kingPos, moves % 2 == 1, positions[lastCheckPiece])){
         lastCheckPiece = movedPiece
         if(!checkForMoves(moves % 2 == 1)){
             let winner = "White"
@@ -336,7 +335,6 @@ function eat(id, castle){
         }
         return
     } else if(check(kingPos, moves % 2 == 1, positions[movedPiece])){
-        console.log("Ran")
         lastCheckPiece = movedPiece
         if(!checkForMoves(moves % 2 == 1)){
             let winner = "White"
@@ -347,10 +345,9 @@ function eat(id, castle){
             return
         }
         return
-    } /*else if(!checkForMoves(moves % 2 == 1)){
-        console.log("draw")
+    } else if(!checkForMoves(moves % 2 == 1)){
         gameOver(true)
-    }*/
+    }
 
     let pieceAmmount = [0, 0]
 
@@ -385,10 +382,8 @@ function check(kingPos, white, sqr, king, checkPiece){
 
         let pos = positions[i]
         let numPos = [alphToNum(pos[0]), parseInt(pos[1])]
-        if(white && i[0] == "w"){
-            continue
-        }
-        if(!white && i[0] == "b"){
+
+        if(white && i[0] == "w" || !white && i[0] == "b" || i.split("_")[1] == "King"){
             continue
         }
 
@@ -451,6 +446,7 @@ function check(kingPos, white, sqr, king, checkPiece){
        //console.log(canMove, piecePos(kingPos, i, i.split("_")[1], null), i)
 
         if(canMove && piecePos(kingPos, i, i.split("_")[1], null, checkPiece ? checkPiece : null) || hopOver){
+            console.log(i, kingPos)
             inCheck = true
         }
 
@@ -564,7 +560,7 @@ function checkForMoves(white){
                 }
                 //console.log(i, sqr, pos, piecePos(sqr, i, type, null, {id: i, pos: sqr}), !check(kingPos, moves % 2 == 1, positions[movedPiece], king, {id: i, pos: sqr}), canMove)
                 if(piecePos(sqr, i, type, null, {id: i, pos: sqr}) && !check(kingPos, moves % 2 == 1, positions[movedPiece], king, {id: i, pos: sqr}) && canMove || hopOver && !check(kingPos, moves % 2 == 1, positions[movedPiece], king)){
-                    console.log(i)
+                    //console.log(i)
                     return true
                 }
             }
@@ -769,7 +765,7 @@ function sqrsPressed(obj){
                 
         }
         
-        console.log(king, canMove, piecePos(id, movedPiece, pieceType), !check(positions[king], moves % 2 == 1, id, null, {id: movedPiece, pos: id}))
+        //console.log(king, canMove, piecePos(id, movedPiece, pieceType), !check(positions[king], moves % 2 == 1, id, null, {id: movedPiece, pos: id}))
 
         if(canMove && piecePos(id, movedPiece, pieceType) && canContinue && !check(positions[king], moves % 2 == 0, id, king ? true : false, {id: movedPiece, pos: id}) || hopOver && canContinue && !check(positions[king], moves % 2 == 0, id, null, {id: movedPiece, pos: id})){
             num++
