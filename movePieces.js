@@ -71,8 +71,6 @@ function piecePos(sqrPos, piecePos, type, sqr, checkPiece){
             pos = [alphToNum(checkPiece.pos[0]), parseInt(checkPiece.pos[1])]
         }
 
-        //console.log(i, pos)
-
         if(type == "Pawn"){
             if(sqrNumPos[0] == pieceNumPos[0]){
                 if(pos[1] == sqrNumPos[1] && pos[0] == sqrNumPos[0]){
@@ -367,7 +365,6 @@ function eat(id, castle){
 }
 
 function check(kingPos, white, sqr, king, checkPiece){
-    //console.log("\n\n\nNew Check check")
     if(king && sqr){
         kingPos = sqr
     }
@@ -439,13 +436,10 @@ function check(kingPos, white, sqr, king, checkPiece){
                 
         }
 
-       //console.log(canMove, piecePos(kingPos, i, i.split("_")[1], null), i)
-
         if(canMove && piecePos(kingPos, i, i.split("_")[1], null, checkPiece ? checkPiece : null) || hopOver){
             if(checkPiece && pos == checkPiece.pos){
                 continue
             } else{
-                //console.log(i, pos, kingPos)
                 inCheck = true
             }
         }
@@ -558,9 +552,7 @@ function checkForMoves(white){
                         }
                         break       
                 }
-                //console.log(i, sqr, pos, piecePos(sqr, i, type, null, {id: i, pos: sqr}), !check(kingPos, moves % 2 == 1, positions[movedPiece], king, {id: i, pos: sqr}), canMove)
                 if(piecePos(sqr, i, type, null, {id: i, pos: sqr}) && !check(kingPos, moves % 2 == 1, positions[movedPiece], king, {id: i, pos: sqr}) && canMove || hopOver && !check(kingPos, moves % 2 == 1, positions[movedPiece], king)){
-                    //console.log(i)
                     return true
                 }
             }
@@ -765,8 +757,6 @@ function sqrsPressed(obj){
                 
         }
         
-        //console.log(king, canMove, piecePos(id, movedPiece, pieceType), !check(positions[king], moves % 2 == 1, id, null, {id: movedPiece, pos: id}))
-
         if(canMove && piecePos(id, movedPiece, pieceType) && canContinue && !check(positions[king], moves % 2 == 0, id, movedPiece.split("_")[1] == "King", {id: movedPiece, pos: id}) || hopOver && canContinue && !check(positions[king], moves % 2 == 0, id, null, {id: movedPiece, pos: id})){
             num++
             positions[movedPiece] = id
