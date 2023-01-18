@@ -207,7 +207,7 @@ function movePiece(obj){
                 document.getElementById(`${x}${z}Marker`).style.visibility = "hidden"
             }
         }
-    } else if(canContinue && !check(kingPos, moves % 2 == 0, positions[movedPiece], movedPiece.split("_")[1] == "King")){
+    } else if(canContinue /*&& !check(kingPos, moves % 2 == 0, positions[movedPiece], movedPiece.split("_")[1] == "King")*/){
         let type = id.split("_")[1]
         let king = false
         let pos = positions[id]
@@ -322,7 +322,7 @@ function movePiece(obj){
                     }
                 }
 
-                if(piecePos(sqr, id, type, null, null) && !check(kingPos, moves % 2 == 0, sqr, king, null) && canMove || hopOver && !check(kingPos, moves % 2 == 0, sqr, king)){
+                if(piecePos(sqr, id, type, null, null) && !check(kingPos, moves % 2 == 0, sqr, king, {id: id, pos: sqr}) && canMove || hopOver && !check(kingPos, moves % 2 == 0, sqr, king, {id: id, pos: sqr})){
                     hasMovingSpot = true
                     document.getElementById(`${x}${z}Marker`).style.visibility = "visible"
                 }
