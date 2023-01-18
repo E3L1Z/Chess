@@ -27,13 +27,13 @@ img{
 }
 .whites{
     position: absolute;;
-    z-index: 2;
+    z-index: 3;
     width: 60px;
     height: 60px;
 }
 .blacks{
     position: absolute;
-    z-index: 2;
+    z-index: 3;
     width: 60px;
     height: 60px;
     pointer-events: none;
@@ -43,8 +43,9 @@ img{
     width: 30px;
     height: 30px;
     border-radius: 15px;
-    z-index: 10;
+    z-index: 2;
     opacity: 1;
     background-color: green;
     visibility: hidden;
+    pointer-events: none;
 }

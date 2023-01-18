@@ -17,6 +17,7 @@ let blackPieces = ["black_Rook_1", "black_Rook_2", "black_Knight_1", "black_Knig
 let moved = {white_Rook_1: false, white_Rook_2: false, white_King: false, white_Pawn_1: false, white_Pawn_2: false, white_Pawn_3: false, white_Pawn_4: false, white_Pawn_5: false, white_Pawn_6: false, white_Pawn_7: false, white_Pawn_8: false, black_Rook_1: false, black_Rook_2: false, black_King: false, black_Pawn_1: false, black_Pawn_2: false, black_Pawn_3: false, black_Pawn_4: false, black_Pawn_5: false, black_Pawn_6: false, black_Pawn_7: false, black_Pawn_8: false}
 
 let positions = {white_Rook_1: "H1", white_Rook_2: "A1", white_Knight_1: "G1", white_Knight_2: "B1", white_Bishop_1: "F1", white_Bishop_2: "C1", white_King: "E1", white_Queen: "D1", white_Pawn_1: "H2",  white_Pawn_2: "G2",  white_Pawn_3: "F2",  white_Pawn_4: "E2",  white_Pawn_5: "D2",  white_Pawn_6: "C2",  white_Pawn_7: "B2",  white_Pawn_8: "A2", black_Rook_1: "H8", black_Rook_2: "A8", black_Knight_1: "G8", black_Knight_2: "B8", black_Bishop_1: "F8", black_Bishop_2: "C8", black_King: "E8", black_Queen: "D8", black_Pawn_1: "H7",  black_Pawn_2: "G7",  black_Pawn_3: "F7",  black_Pawn_4: "E7",  black_Pawn_5: "D7",  black_Pawn_6: "C7",  black_Pawn_7: "B7",  black_Pawn_8: "A7"}
+let allPositions = []
 
 function alphToNum(alpha){
     switch(alpha){
@@ -189,30 +190,162 @@ function getPos(obj, ar){
 
 function movePiece(obj){
     let id = obj.id
-    let kingPos = positions["white_King"]
+    let kingPos = positions["black_King"]
+    let pieces = blackPieces
+    let hasMovingSpot = false
 
-    if(moves % 2 == 0){
-        pieces = blackPieces
-        kingPos = positions["black_King"]
+    if(moves % 2 == 0) {
+        kingPos = positions["white_King"]
+        pieces = whitePieces
     }
 
     if(movedPiece == id && canContinue){
         movedPiece = ""
         document.getElementById(id).style.opacity = 1
-    } else if(canContinue && !check(kingPos, moves % 2 == 1, positions[movedPiece], movedPiece.split("_")[1] == "King")){
+        for(let x of ["A", "B", "C", "D", "E", "F", "G", "H"]){
+            for(let z = 1; z <= 8; z++){
+                document.getElementById(`${x}${z}Marker`).style.visibility = "hidden"
+            }
+        }
+    } else if(canContinue && !check(kingPos, moves % 2 == 0, positions[movedPiece], movedPiece.split("_")[1] == "King")){
+        let type = id.split("_")[1]
+        let king = false
+        let pos = positions[id]
+        let numPos = [alphToNum(pos[0]), parseInt(pos[1])]
+        for(let x of ["A", "B", "C", "D", "E", "F", "G", "H"]){
+            for(let z = 1; z <= 8; z++){
+                document.getElementById(`${x}${z}Marker`).style.visibility = "hidden"
+
+                let canMove = false
+                let hopOver = false
+                let sqr = x + z.toString()
+                let numSqr = [alphToNum(sqr[0]), parseInt(sqr[1])]
+                let Continue = true
+
+                if(!Continue) continue
+
+                switch(id.split("_")[1]){
+                    case "Rook":
+                        if(sqr[0] == pos[0] || sqr[1] == pos[1]) {
+                            canMove = true
+                        }
+                        break
+        
+                    case "Bishop":
+                        if(Math.pow(numSqr[0] - numPos[0], 2) == Math.pow(numSqr[1] - numPos[1], 2)){
+                            canMove = true
+                        }
+                        break
+        
+                    case "Queen":
+                        if(Math.pow(numSqr[0] - numPos[0], 2) == Math.pow(numSqr[1] - numPos[1], 2)){
+                            canMove = true
+                        }
+        
+                        if(sqr[0] == pos[0] || sqr[1] == pos[1]) {
+                            canMove = true
+                        }
+                        break
+        
+                    case "King":
+                        king = true
+                        if(Math.pow(numSqr[0] - numPos[0], 2) == 1 && Math.pow(numSqr[1] - numPos[1], 2) == 1){
+                            canMove = true
+                        }
+        
+                        if(sqr[0] == pos[0] && Math.pow(parseInt(sqr[1]) - parseInt(pos[1]), 2) == 1 || sqr[1] == pos[1] && Math.pow(parseInt(alphToNum(sqr[0])) - parseInt(alphToNum(pos[0])), 2) == 1) {
+                            canMove = true
+                        }
+                        if(moves % 2 == 0){
+                            if(sqr == "G1" && !moved["white_Rook_1"] && !moved["white_King"] && !check(positions["white_King"], true, "G1") && !check(positions["white_King"], true, "F1") && !check(positions["white_King"], true, "E1")){
+                                if(piecePos(sqr, id)){
+                                    hasMovingSpot = true
+                                    document.getElementById(`${x}${z}Marker`).style.visibility = "visible"
+                                }
+                            }
+                            else if(sqr == "C1" && !moved["white_Rook_2"] && !moved["white_King"] && !check(positions["white_King"], true, "C1") && !check(positions["white_King"], true, "D1") && !check(positions["white_King"], true, "E1")){
+                                if(piecePos(sqr, id)){
+                                    hasMovingSpot = true
+                                    document.getElementById(`${x}${z}Marker`).style.visibility = "visible"
+                                }
+                            }
+                        }
+                        else{
+                            if(sqr == "G8" && !moved["black_Rook_1"] && !moved["black_King"] && !check(positions["black_King"], false, "G8") && !check(positions["black_King"], false, "F8") && !check(positions["black_King"], false, "E8")){
+                                if(piecePos(sqr, id)){
+                                    hasMovingSpot = true
+                                    document.getElementById(`${x}${z}Marker`).style.visibility = "visible"
+                                }
+                            }
+                            else if(sqr == "C8" && !moved["black_Rook_2"] && !moved["black_King"] && !check(positions["black_King"], false, "C8") && !check(positions["black_King"], false, "D8") && !check(positions["black_King"], false, "E8")){
+                                if(piecePos(sqr, id)){
+                                    hasMovingSpot = true
+                                    document.getElementById(`${x}${z}Marker`).style.visibility = "visible"
+                                }
+                            }
+                        }
+                        break
+        
+                    case "Pawn":
+                        if(!moved[id]){
+                            if(sqr[0] == positions[id][0] && parseInt(sqr[1]) - parseInt(positions[id][1]) == 2 && moves % 2 == 0 || sqr[0] == positions[id][0] && parseInt(sqr[1]) - parseInt(positions[id][1]) == -2 && moves % 2 == 1){
+                                canMove = true
+                            }
+                        }
+                        if(moves % 2 == 0 && numSqr[0] - numPos[0] == 1 && numSqr[1] - numPos[1] == 1 || moves % 2 == 0 && numSqr[0] - numPos[0] == -1 && numSqr[1] - numPos[1] == 1 || moves % 2 == 1 && numSqr[0] - numPos[0] == 1 && numSqr[1] - numPos[1] == -1 || moves % 2 == 1 && numSqr[0] - numPos[0] == -1 && numSqr[1] - numPos[1] == -1){
+                            canMove = true
+                        }
+        
+                        if(numSqr[0] == numPos[0] && numSqr[1] - numPos[1] == 1 && moves % 2 == 0 || numSqr[0] == numPos[0] && numSqr[1] - numPos[1] == -1 && moves % 2 == 1){
+                            canMove = true
+                            console.log(pos, numPos, sqr, numSqr)
+                        }
+        
+                        break
+        
+                    case "Knight":
+        
+                        let posX = Math.pow(numSqr[0] - numPos[0], 2)
+                        let posY = Math.pow(numSqr[1] - numPos[1], 2)
+        
+                        if(posX == 4 && posY == 1 || posX == 1 && posY == 4 ){
+                            hopOver = true
+
+                        }
+                        break       
+                }
+
+                for(let i of pieces){
+                    if(sqr == positions[i]) {
+                        canMove = false
+                        hopOver = false
+                    }
+                }
+
+                if(piecePos(sqr, id, type, null, null) && !check(kingPos, moves % 2 == 0, sqr, king, null) && canMove || hopOver && !check(kingPos, moves % 2 == 0, sqr, king)){
+                    hasMovingSpot = true
+                    document.getElementById(`${x}${z}Marker`).style.visibility = "visible"
+                }
+            }
+        }
+        
+        if(movedPiece){
+            document.getElementById(movedPiece).style.opacity = 1
+        }
+        
+    } 
+    
+    if(hasMovingSpot){
+        movedPiece = id
+        document.getElementById(id).style.opacity = 0.7
         lastCheckPiece = ""
+    }/*else if(check(kingPos, moves % 2 == 1, positions[movedPiece], movedPiece.split("_")[1] == "King")){
         if(movedPiece){
             document.getElementById(movedPiece).style.opacity = 1
         }
         movedPiece = id
         document.getElementById(id).style.opacity = 0.7
-    } else if(check(kingPos, moves % 2 == 1, positions[movedPiece], movedPiece.split("_")[1] == "King")){
-        if(movedPiece){
-            document.getElementById(movedPiece).style.opacity = 1
-        }
-        movedPiece = id
-        document.getElementById(id).style.opacity = 0.7
-    }
+    }*/
 }
 
 function changePawn(toChange){
@@ -265,6 +398,12 @@ function upgradePawn(white, x){
 function eat(id, castle){
     let eatenPiece = null
     let kingPos = positions["black_King"]
+
+    for(let x of ["A", "B", "C", "D", "E", "F", "G", "H"]){
+        for(let z = 1; z <= 8; z++){
+            document.getElementById(`${x}${z}Marker`).style.visibility = "hidden"
+        }
+    }
 
     if(moves % 2 == 0){
         for(let i of whitePieces){
@@ -362,6 +501,28 @@ function eat(id, castle){
     }
 
     if(draw) gameOver(true)
+
+    let key = ""
+
+    for(let x in positions){
+        key += positions[x]
+    }
+
+    allPositions.push(key)
+
+    let positionsNum = {}
+    for(let i of allPositions){
+
+        if(positionsNum[i]){
+            positionsNum[i] += 1
+        } else{
+            positionsNum[i] = 1
+        }
+
+        if(positionsNum[i] == 3){
+            gameOver(true)
+        }
+    }
 }
 
 function check(kingPos, white, sqr, king, checkPiece){
@@ -477,7 +638,7 @@ function checkForMoves(white){
 
     for(let i of pieces){
         let type = i.split("_")[1]
-        let king = type == "King"
+        let king = false
         let pos = positions[i]
         let numPos = [alphToNum(pos[0]), parseInt(pos[1])]
 
@@ -521,6 +682,7 @@ function checkForMoves(white){
                         break
         
                     case "King":
+                        king = true
                         if(Math.pow(numSqr[0] - numPos[0], 2) == 1 && Math.pow(numSqr[1] - numPos[1], 2) == 1){
                             canMove = true
                         }
@@ -552,7 +714,7 @@ function checkForMoves(white){
                         }
                         break       
                 }
-                if(piecePos(sqr, i, type, null, {id: i, pos: sqr}) && !check(kingPos, moves % 2 == 1, positions[movedPiece], king, {id: i, pos: sqr}) && canMove || hopOver && !check(kingPos, moves % 2 == 1, positions[movedPiece], king)){
+                if(piecePos(sqr, i, type, null, {id: i, pos: sqr}) && !check(kingPos, moves % 2 == 1, sqr, king, {id: i, pos: sqr}) && canMove || hopOver && !check(kingPos, moves % 2 == 1, sqr, king)){
                     return true
                 }
             }
@@ -759,6 +921,11 @@ function sqrsPressed(obj){
         
         if(canMove && piecePos(id, movedPiece, pieceType) && canContinue && !check(positions[king], moves % 2 == 0, id, movedPiece.split("_")[1] == "King", {id: movedPiece, pos: id}) || hopOver && canContinue && !check(positions[king], moves % 2 == 0, id, null, {id: movedPiece, pos: id})){
             num++
+
+            if(movedPiece.split("_")[1] == "King" || movedPiece.split("_")[1] == "Rook"){
+                moved[movedPiece] = true
+            }
+            
             positions[movedPiece] = id
 
             if(movedPiece.split("_")[1] == "Pawn"){
@@ -795,6 +962,11 @@ function sqrsPressed(obj){
         } else{
             document.getElementById(movedPiece).style.opacity = 1
             movedPiece = ""
+            for(let x of ["A", "B", "C", "D", "E", "F", "G", "H"]){
+                for(let z = 1; z <= 8; z++){
+                    document.getElementById(`${x}${z}Marker`).style.visibility = "hidden"
+                }
+            }
         }
     }
 }
