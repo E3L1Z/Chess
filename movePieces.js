@@ -74,7 +74,7 @@ function piecePos(sqrPos, piecePos, type, sqr, checkPiece){
 
         if(type == "Pawn"){
             if(sqrNumPos[0] == pieceNumPos[0]){
-                if(pos[1] == sqrNumPos[1] && pos[0] == sqrNumPos[0]){
+                if(pos[1] == sqrNumPos[1] && pos[0] == sqrNumPos[0] || moves % 2 == 0 && pos[1] - sqrNumPos[1] == -1 && pos[0] == sqrNumPos[0] || moves % 2 == 1 && pos[1] - sqrNumPos[1] == 1 && pos[0] == sqrNumPos[0]){
                     canMove = false
                     break
                 }
@@ -929,6 +929,7 @@ function sqrsPressed(obj){
             positions[movedPiece] = id
 
             if(movedPiece.split("_")[1] == "Pawn"){
+                moved[movedPiece] = true
                 lastEaten = 0
             }
 
