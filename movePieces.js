@@ -258,13 +258,13 @@ function movePiece(obj){
                         }
                         if(moves % 2 == 0){
                             if(sqr == "G1" && !moved["white_Rook_1"] && !moved["white_King"] && !check(positions["white_King"], true, "G1") && !check(positions["white_King"], true, "F1") && !check(positions["white_King"], true, "E1")){
-                                if(piecePos(sqr, id)){
+                                if(piecePos("H1", id)){
                                     hasMovingSpot = true
                                     document.getElementById(`${x}${z}Marker`).style.visibility = "visible"
                                 }
                             }
                             else if(sqr == "C1" && !moved["white_Rook_2"] && !moved["white_King"] && !check(positions["white_King"], true, "C1") && !check(positions["white_King"], true, "D1") && !check(positions["white_King"], true, "E1")){
-                                if(piecePos(sqr, id)){
+                                if(piecePos("B1", id)){
                                     hasMovingSpot = true
                                     document.getElementById(`${x}${z}Marker`).style.visibility = "visible"
                                 }
@@ -272,13 +272,13 @@ function movePiece(obj){
                         }
                         else{
                             if(sqr == "G8" && !moved["black_Rook_1"] && !moved["black_King"] && !check(positions["black_King"], false, "G8") && !check(positions["black_King"], false, "F8") && !check(positions["black_King"], false, "E8")){
-                                if(piecePos(sqr, id)){
+                                if(piecePos("H8", id)){
                                     hasMovingSpot = true
                                     document.getElementById(`${x}${z}Marker`).style.visibility = "visible"
                                 }
                             }
                             else if(sqr == "C8" && !moved["black_Rook_2"] && !moved["black_King"] && !check(positions["black_King"], false, "C8") && !check(positions["black_King"], false, "D8") && !check(positions["black_King"], false, "E8")){
-                                if(piecePos(sqr, id)){
+                                if(piecePos("B8", id)){
                                     hasMovingSpot = true
                                     document.getElementById(`${x}${z}Marker`).style.visibility = "visible"
                                 }
@@ -540,7 +540,7 @@ function check(kingPos, white, sqr, king, checkPiece){
         let pos = positions[i]
         let numPos = [alphToNum(pos[0]), parseInt(pos[1])]
 
-        if(white && i[0] == "w" || !white && i[0] == "b" || i.split("_")[1] == "King"){
+        if(white && i[0] == "w" || !white && i[0] == "b"){
             continue
         }
 
