@@ -19,6 +19,14 @@ let moved = {white_Rook_1: false, white_Rook_2: false, white_King: false, white_
 let positions = {white_Rook_1: "H1", white_Rook_2: "A1", white_Knight_1: "G1", white_Knight_2: "B1", white_Bishop_1: "F1", white_Bishop_2: "C1", white_King: "E1", white_Queen: "D1", white_Pawn_1: "H2",  white_Pawn_2: "G2",  white_Pawn_3: "F2",  white_Pawn_4: "E2",  white_Pawn_5: "D2",  white_Pawn_6: "C2",  white_Pawn_7: "B2",  white_Pawn_8: "A2", black_Rook_1: "H8", black_Rook_2: "A8", black_Knight_1: "G8", black_Knight_2: "B8", black_Bishop_1: "F8", black_Bishop_2: "C8", black_King: "E8", black_Queen: "D8", black_Pawn_1: "H7",  black_Pawn_2: "G7",  black_Pawn_3: "F7",  black_Pawn_4: "E7",  black_Pawn_5: "D7",  black_Pawn_6: "C7",  black_Pawn_7: "B7",  black_Pawn_8: "A7"}
 let allPositions = []
 
+function resetBoard(){
+    for(let i in positions){
+        let position = positions[i]
+        document.getElementById(i).style.right = `${getPos(position[0], ["A", "B", "C", "D", "E", "F", "G", "H"])}px`
+        document.getElementById(i).style.top = `${getPos(position[1], ["1", "2", "3", "4", "5", "6", "7", "8"])}`
+    }
+}
+
 function alphToNum(alpha){
     switch(alpha){
         case "A":
@@ -151,40 +159,80 @@ function piecePos(sqrPos, piecePos, type, sqr, checkPiece){
 
 function getPos(obj, ar){
     let x = 0
-    switch(obj){
-        case ar[0]:
-            x = 430
-            break
+    console.log(window.innerWidth)
+    if(window.innerWidth > 568){
+        switch(obj){
+            case ar[0]:
+                x = 430
+                break
 
-        case ar[1]:
-            x = 370
-            break
+            case ar[1]:
+                x = 370
+                break
 
-        case ar[2]:
-            x = 310
-            break
+            case ar[2]:
+                x = 310
+                break
 
-        case ar[3]:
-            x = 250
-            break
+            case ar[3]:
+                x = 250
+                break
 
-        case ar[4]:
-            x = 190
-            break
+            case ar[4]:
+                x = 190
+                break
 
-        case ar[5]:
-            x = 130
-            break
-        
-        case ar[6]:
-            x = 70
-            break
+            case ar[5]:
+                x = 130
+                break
+            
+            case ar[6]:
+                x = 70
+                break
 
-        case ar[7]:
-            x = 10
-            break
+            case ar[7]:
+                x = 10
+                break
+        }
+    } else{
+        console.log("Ran")
+        switch(obj){
+            case ar[0]:
+                x = 206.04166666666666666667
+                break
+
+            case ar[1]:
+                x = 177.2916666666666666659
+                break
+
+            case ar[2]:
+                x = 148.54166666666666666667
+                break
+
+            case ar[3]:
+                x = 119.79166666666666666667
+                break
+
+            case ar[4]:
+                x = 91.04166666666666666667
+                break
+
+            case ar[5]:
+                x = 62.29166666666666666667
+                break
+            
+            case ar[6]:
+                x = 33.54166666666666666667
+                break
+
+            case ar[7]:
+                x = 4.79166666666666666667
+                break
+        }
+
+        x += 7
     }
-
+    console.log(x)
     return x
 }
 
@@ -339,7 +387,10 @@ function movePiece(obj){
         movedPiece = id
         document.getElementById(id).style.opacity = 0.7
         lastCheckPiece = ""
-    }/*else if(check(kingPos, moves % 2 == 1, positions[movedPiece], movedPiece.split("_")[1] == "King")){
+    } else{
+        movedPiece = ""
+    }
+    /*else if(check(kingPos, moves % 2 == 1, positions[movedPiece], movedPiece.split("_")[1] == "King")){
         if(movedPiece){
             document.getElementById(movedPiece).style.opacity = 1
         }
@@ -727,7 +778,7 @@ function checkForMoves(white){
 function sqrsPressed(obj){
     if(gameOverBool){
         document.getElementById("gameOverTextContainer").style.visibility = "hidden"
-        return
+        return  
     }
     let id = obj.id
 
@@ -971,3 +1022,5 @@ function sqrsPressed(obj){
         }
     }
 }
+console.log("Ran")
+setTimeout(()=>{resetBoard()}, 10)
