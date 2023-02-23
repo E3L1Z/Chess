@@ -203,7 +203,7 @@ function getPos(obj, ar){
         x -= 3
     }
     
-    return x * (window.innerWidth/1280)
+    return x * (window.innerWidth/screenSize)
 }
 
 function movePiece(obj){
