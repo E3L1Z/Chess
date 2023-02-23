@@ -52,7 +52,7 @@ function screenSizeChanged(){
             document.getElementById(x+z).style.width = `${Math.floor(60 * (window.innerWidth / 1280) * 10) / 10}px`
             document.getElementById(x+z).style.height = `${Math.floor(60 * (window.innerWidth / 1280) * 10) / 10}px`
             document.getElementById(x+z+"Marker").style.top = `${markerPos(z, ["1", "2", "3", "4", "5", "6", "7", "8"])}px`
-            document.getElementById(x+z+"Marker").style.right = `${markerPos(x, ["A", "B", "C", "D", "E", "F", "G", "Hx"])}px`
+            document.getElementById(x+z+"Marker").style.right = `${markerPos(x, ["A", "B", "C", "D", "E", "F", "G", "H"])}px`
             document.getElementById(x+z+"Marker").style.width = `${30 * (window.innerWidth / 1280)}px`
             document.getElementById(x+z+"Marker").style.height = `${30 * (window.innerWidth / 1280)}px`
             document.getElementById(x+z+"Marker").style.borderRadius = `${(30 * (window.innerWidth / 1280))/2}px`
@@ -70,6 +70,15 @@ function screenSizeChanged(){
     document.getElementById("gameOverTextContainer").style.width = `${Math.ceil(200 * (window.innerWidth / 1280))}px`
     document.getElementById("gameOverTextContainer").style.height = `${Math.ceil((150 * (window.innerWidth / 1280)))}px`
     document.getElementById("gameOverTextContainer").style.borderRadius = `${Math.ceil((10 * (window.innerWidth / 1280)))}px`
+    document.getElementById("pawnUpgrades").style.top = `${260 * (window.innerWidth / 1280)}px`
+    document.getElementById("pawnUpgrades").style.left = `${480 * (window.innerWidth / 1280)}px`
+
+    let upgradeImgs = document.getElementsByClassName("upgradeImgs")
+    for(let i = 0; i < upgradeImgs.length; i++){
+        upgradeImgs[i].style.marginRight = `${20 * (window.innerWidth / 1280)}px`
+        upgradeImgs[i].style.height = `${80 * (window.innerWidth / 1280)}px`
+        upgradeImgs[i].style.width = `${80 * (window.innerWidth / 1280)}px`
+    }
 
     let pos = givePos()
     for(let i of pos){

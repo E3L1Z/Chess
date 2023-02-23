@@ -196,6 +196,13 @@ function getPos(obj, ar){
             x = 10
             break
     }
+
+    if(ar[0] == "1"){
+        x += 3
+    } else{
+        x -= 3
+    }
+    
     return x * (window.innerWidth/1280)
 }
 

@@ -200,18 +200,20 @@
                 <div id="H8Marker" style="top: 25px; right: 25px;" class="markers"></div>
             </div>
 
-            <div style="position: absolute; display: flex; width: 100%; height: 100%; justify-content: center; align-items: center;">
+            <div style="position: absolute; display: flex; width: 100%; height: 100%; justify-content: center; align-items: center; pointer-events: none;">
                 <div id="gameOverTextContainer" style="display: flex; justify-content: center; align-items: center; width: 200px; height: 150px; background-color: rgb(64, 102, 59); border-radius: 10px; visibility: hidden;">
                     <div id="gameOverText" style="color: white; font-size: 2em; font-weight: bold; margin: 0; pointer-events: none; text-align: center;">White is the winner!</div>
                 </div>
             </div>
         </div>
 
-        <div id="pawnUpgrades" style="position: absolute; top: 260px; left: 480px; visibility: hidden; z-index: 9;">
-            <img id="bishop" style="float:left; margin-right: 20px;" onclick="changePawn('Bishop')" src="images/bishop_black.png">
-            <img id="knight" style="float:left; margin-right: 20px;" onclick="changePawn('Knight')" src="images/knight_black.png">
-            <img id="rook" style="float:left; margin-right: 20px;" onclick="changePawn('Rook')" src="images/rook_black.png">
-            <img id="queen" style="float:left; margin-right: 20px;" onclick="changePawn('Queen')" src="images/queen_black.png">
+        <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; pointer-events: none; position: fixed;">
+            <div id="pawnUpgrades" style="visibility: hidden; z-index: 9;">
+                <img class="upgradeImgs" id="bishop" style="height: 80px; width: 80px; float:left; margin-right: 20px;" onclick="changePawn('Bishop')" src="images/bishop_black.png">
+                <img class="upgradeImgs" id="knight" style="height: 80px; width: 80px; float:left; margin-right: 20px;" onclick="changePawn('Knight')" src="images/knight_black.png">
+                <img class="upgradeImgs" id="rook" style="height: 80px; width: 80px; float:left; margin-right: 20px;" onclick="changePawn('Rook')" src="images/rook_black.png">
+                <img class="upgradeImgs" id="queen" style="height: 80px; width: 80px; float:left; margin-right: 20px;" onclick="changePawn('Queen')" src="images/queen_black.png">
+            </div>
         </div>
 
     </body>
