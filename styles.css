@@ -15,90 +15,42 @@ img{
     top: 3px;
 }
 
-@media screen and (max-width: 568px){
-    .board{
-        background-color: rgb(113, 64, 6);
-        width: 250px;
-        height: 250px;
-        z-index: 0;
-        position: relative;
-    }
-    .sqrs{
-        width: 28.75px;
-        height: 28.75px;
-        float: left;
-        z-index: 1;
-    }
-    .piecesImg{
-        width: 21.76785714285714285714px;
-        height: 21.76785714285714285714px;
-    }
-    .whites{
-        position: absolute;
-        z-index: 3;
-        width: 24.64285714285714285714px;
-        height: 24.64285714285714285714px;
-    }
-    .blacks{
-        position: absolute;
-        z-index: 3;
-        width: 24.64285714285714285714px;
-        height: 24.64285714285714285714px;
-        pointer-events: none;
-    }
-    .markers{
-        position: absolute;
-        width: 12.32142857142857142857px;
-        height: 12.32142857142857142857px;
-        border-radius: 6.16071428571428571429px;
-        z-index: 2;
-        opacity: 1;
-        background-color: green;
-        visibility: hidden;
-        pointer-events: none;
-    }
+.board{
+    background-color: rgb(113, 64, 6);
+    z-index: 0;
+    position: relative;
 }
-
-@media screen and (min-width: 568px){
-    .board{
-        background-color: rgb(113, 64, 6);
-        width: 500px;
-        height: 500px;
-        z-index: 0;
-        position: relative;
-    }
-    .sqrs{
-        width: 60px;
-        height: 60px;
-        float: left;
-        z-index: 1;
-    }
-    .piecesImg{
-        width: 53px;
-        height: 53px;
-    }
-    .whites{
-        position: absolute;
-        z-index: 3;
-        width: 60px;
-        height: 60px;
-    }
-    .blacks{
-        position: absolute;
-        z-index: 3;
-        width: 60px;
-        height: 60px;
-        pointer-events: none;
-    }
-    .markers{
-        position: absolute;
-        width: 30px;
-        height: 30px;
-        border-radius: 15px;
-        z-index: 2;
-        opacity: 1;
-        background-color: green;
-        visibility: hidden;
-        pointer-events: none;
-    }
+.sqrs{
+    width: 60px;
+    height: 60px;
+    float: left;
+    z-index: 1;
+}
+.piecesImg{
+    width: 53px;
+    height: 53px;
+}
+.whites{
+    position: absolute;
+    z-index: 3;
+    width: 60px;
+    height: 60px;
+}
+.blacks{
+    position: absolute;
+    z-index: 3;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+}
+.markers{
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    z-index: 2;
+    opacity: 1;
+    background-color: green;
+    visibility: hidden;
+    pointer-events: none;
 }

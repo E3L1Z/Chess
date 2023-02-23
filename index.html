@@ -3,10 +3,11 @@
     <head>
         <link rel="stylesheet" type="text/css" href="styles.css">
         <script src="movePieces.js"></script>
+        <script src="scale.js"></script>
     </head>
     <body>
-        <div class="board">
-            <div style="margin: 10px;">
+        <div class="board" style="width: 500px; height: 500px;" id ="board">
+            <div class="margin" style="margin: 10px;">
                 <div>
                     <div id="A8" onclick="sqrsPressed(this)" class="sqrs" style="background-color: white;"></div>
                     <div id="B8" onclick="sqrsPressed(this)" class="sqrs" style="background-color: black;"></div>
@@ -91,7 +92,7 @@
                 <!--<div id="gameOverText" style=" filter: invert(1); display: table-cell; vertical-align: middle; z-index: 10; text-align: center; position: absolute; top: 190px; left: 130px;height:120px; width: 240px; font-size: 3em; font-weight: bold; pointer-events: none; mix-blend-mode: difference; background-color: rgb(255, 255, 255)">White is the winner!</div>-->
             </div>
         
-            <div style="margin: 10px;">
+            <div class="margin" style="margin: 10px;">
                 <!--Whites-->
                 <div>
                     <div  onclick="movePiece(this)" id="white_Rook_1" class="whites" style="top: 430px; right: 10px;"><img id="white_Rook_1_Img" class="piecesImg" src="images/rook_white.png"></div>
@@ -132,7 +133,7 @@
                 </div>
             </div>
             
-            <div style="margin: 10px">
+            <div class="margin" style="margin: 10px">
                 <div id="A1Marker" style="top: 445px; right: 445px;" class="markers"></div>
                 <div id="B1Marker" style="top: 445px; right: 385px;" class="markers"></div>
                 <div id="C1Marker" style="top: 445px; right: 325px;" class="markers"></div>
