@@ -61,12 +61,15 @@ function screenSizeChanged(){
 
     let margins = document.getElementsByClassName("margin");
     for(let i = 0; i < margins.length; i++){
-        console.log("Ran")
         margins[i].style.margin = `${10 * (window.innerWidth / 1280)}px`
     }
 
     document.getElementById("board").style.width = `${Math.ceil(500 * (window.innerWidth / 1280))}px`
     document.getElementById("board").style.height = `${Math.ceil((500 * (window.innerWidth / 1280)))}px`
+    document.getElementById("gameOverText").style.fontSize = `${2 * (window.innerWidth / 1280)}em`
+    document.getElementById("gameOverTextContainer").style.width = `${Math.ceil(200 * (window.innerWidth / 1280))}px`
+    document.getElementById("gameOverTextContainer").style.height = `${Math.ceil((150 * (window.innerWidth / 1280)))}px`
+    document.getElementById("gameOverTextContainer").style.borderRadius = `${Math.ceil((10 * (window.innerWidth / 1280)))}px`
 
     let pos = givePos()
     for(let i of pos){
